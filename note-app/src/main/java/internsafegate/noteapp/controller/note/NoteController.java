@@ -2,12 +2,14 @@ package internsafegate.noteapp.controller.note;
 
 import internsafegate.noteapp.dto.request.note.NoteDTO;
 import internsafegate.noteapp.dto.response.ResponseObject;
+import internsafegate.noteapp.dto.response.note.NoteListResponse;
 import internsafegate.noteapp.dto.response.note.NoteResponse;
 import internsafegate.noteapp.model.Notes;
 import internsafegate.noteapp.model.Users;
 import internsafegate.noteapp.security.SecurityUtils;
 import internsafegate.noteapp.service.note.NoteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +43,7 @@ public class NoteController {
 
 //  READ
     @GetMapping("/{noteId}")
-    public ResponseEntity<ResponseObject> createNotes(
+    public ResponseEntity<ResponseObject> getNoteById(
             @PathVariable Long noteId
     ) throws Exception {
 
@@ -51,6 +53,25 @@ public class NoteController {
                 .status(HttpStatus.FOUND)
                 .data(noteResponse)
                 .message("Note found successfully.")
+                .build());
+    }
+
+    @GetMapping("/list-notes")
+    public ResponseEntity<ResponseObject> getListNotes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) throws Exception {
+
+        PageRequest pageRequest = PageRequest.of(page, limit);
+
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        NoteListResponse noteListResponse = noteService.getListNotes(loggedInUser.getId(), pageRequest);
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.FOUND)
+                .data(noteListResponse)
+                .message("Get list notes successfully.")
                 .build());
     }
 

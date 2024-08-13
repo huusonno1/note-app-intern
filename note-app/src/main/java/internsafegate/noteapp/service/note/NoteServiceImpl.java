@@ -1,6 +1,7 @@
 package internsafegate.noteapp.service.note;
 
 import internsafegate.noteapp.dto.request.note.NoteDTO;
+import internsafegate.noteapp.dto.response.note.NoteListResponse;
 import internsafegate.noteapp.dto.response.note.NoteResponse;
 import internsafegate.noteapp.exception.DataNotFoundException;
 import internsafegate.noteapp.mapper.NoteMapper;
@@ -9,8 +10,13 @@ import internsafegate.noteapp.model.Users;
 import internsafegate.noteapp.repository.NoteRepository;
 import internsafegate.noteapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -112,5 +118,31 @@ public class NoteServiceImpl implements NoteService{
         Notes savedNote = noteRepo.save(notes);
 
         return noteMapper.toResponseDTO(savedNote);
+    }
+
+    @Override
+    public NoteListResponse getListNotes(Long userId, PageRequest pageRequest) throws Exception {
+        Page<Notes> notesPage = noteRepo.getAllNotes(userId, pageRequest);
+        if (notesPage == null) {
+            throw new DataNotFoundException("Failed to fetch notes: notesPage is null");
+        }
+        List<NoteResponse> noteResponses = notesPage.getContent().stream()
+                .map(note -> {
+                    NoteResponse noteResponse = new NoteResponse();
+                    noteResponse.setId(note.getId());
+                    noteResponse.setTitle(note.getTitle());
+                    noteResponse.setStatusNotes(note.getStatusNotes());
+                    noteResponse.setPinned(note.isPinned());
+                    noteResponse.setNumberOrder(note.getNumberOrder());
+                    noteResponse.setOwnerId(note.getUser().getId());
+
+                    return noteResponse;
+                })
+                .collect(Collectors.toList());
+
+        return NoteListResponse.builder()
+                .notes(noteResponses)
+                .totalPages(notesPage.getTotalPages())
+                .build();
     }
 }
