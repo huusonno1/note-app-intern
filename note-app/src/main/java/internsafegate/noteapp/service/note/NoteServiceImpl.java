@@ -40,4 +40,37 @@ public class NoteServiceImpl implements NoteService{
 
         return noteMapper.toResponseDTO(notes);
     }
+
+    @Override
+    public NoteResponse updateNote(Long noteId, NoteDTO noteDTO) throws Exception {
+        Notes notes = noteRepo.findById(noteId)
+                .orElseThrow(() -> new DataNotFoundException("Node not found"));
+        Users users = userRepo.findById(noteDTO.getUserId())
+                .orElseThrow(() -> new DataNotFoundException("Admin not found"));
+        if(notes.getUser().getId() != users.getId()){
+            throw new DataNotFoundException("Note is not created by user");
+        }
+
+        if(noteDTO.getTitle() != null && noteDTO.getTitle() != notes.getTitle()) {
+            notes.setTitle(noteDTO.getTitle());
+        }
+
+        if(noteDTO.getStatusNotes() != null && noteDTO.getStatusNotes() != notes.getStatusNotes()) {
+            notes.setStatusNotes(noteDTO.getStatusNotes());
+        }
+
+        Boolean isPinnedDTO = noteDTO.isPinned();
+        if (isPinnedDTO != null && isPinnedDTO != notes.isPinned()) {
+            notes.setPinned(isPinnedDTO);
+        }
+
+        if(noteDTO.getNumberOrder() != null && noteDTO.getNumberOrder() != notes.getNumberOrder()) {
+            notes.setNumberOrder(noteDTO.getNumberOrder());
+        }
+
+
+        Notes savedNote = noteRepo.save(notes);
+
+        return noteMapper.toResponseDTO(savedNote);
+    }
 }

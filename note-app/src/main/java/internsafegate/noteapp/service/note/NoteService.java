@@ -7,4 +7,6 @@ public interface NoteService {
     NoteResponse createNote(NoteDTO noteDTO) throws Exception;
 
     NoteResponse getNoteByIds(Long noteId) throws Exception;
+
+    NoteResponse updateNote(Long noteId, NoteDTO noteDTO) throws Exception;
 }

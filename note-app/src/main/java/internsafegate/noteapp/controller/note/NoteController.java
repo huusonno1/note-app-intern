@@ -55,7 +55,26 @@ public class NoteController {
     }
 
 //  UPDATE
+    @PutMapping("/{noteId}")
+    public ResponseEntity<ResponseObject> updateNotes(
+            @PathVariable Long noteId,
+            @RequestBody NoteDTO noteDTO
+    ) throws Exception {
 
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        if(noteDTO.getUserId() == null) {
+            noteDTO.setUserId(loggedInUser.getId());
+        }
+
+        NoteResponse noteResponse = noteService.updateNote( noteId, noteDTO);
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .data(noteResponse)
+                .message("Update node successfully.")
+                .build());
+    }
 //  DELETE
 
 }
