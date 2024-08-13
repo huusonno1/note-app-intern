@@ -75,6 +75,38 @@ public class NoteController {
                 .message("Update node successfully.")
                 .build());
     }
+    @PutMapping("/{noteId}/pin")
+    public ResponseEntity<ResponseObject> pinNotes(
+            @PathVariable Long noteId
+    ) throws Exception {
+
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        NoteResponse noteResponse = noteService.pinNote( noteId, loggedInUser.getId());
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .data(noteResponse)
+                .message("Update node successfully.")
+                .build());
+    }
+
+    @PutMapping("/{noteId}/unpin")
+    public ResponseEntity<ResponseObject> unpinNotes(
+            @PathVariable Long noteId
+    ) throws Exception {
+
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        NoteResponse noteResponse = noteService.unpinNote( noteId, loggedInUser.getId());
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .data(noteResponse)
+                .message("Update node successfully.")
+                .build());
+    }
+
 //  DELETE
     @DeleteMapping("/{noteId}")
     public ResponseEntity<ResponseObject> deleteNotes(

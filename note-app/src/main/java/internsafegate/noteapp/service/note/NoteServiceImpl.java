@@ -83,4 +83,34 @@ public class NoteServiceImpl implements NoteService{
         }
         noteRepo.delete(notes);
     }
+
+    @Override
+    public NoteResponse pinNote(Long noteId, Long userId) throws Exception {
+        Notes notes = noteRepo.findById(noteId)
+                .orElseThrow(() -> new DataNotFoundException("Node not found"));
+        if(notes.getUser().getId() != userId){
+            throw new DataNotFoundException("Note is not created by user");
+        }
+
+        notes.setPinned(true);
+
+        Notes savedNote = noteRepo.save(notes);
+
+        return noteMapper.toResponseDTO(savedNote);
+    }
+
+    @Override
+    public NoteResponse unpinNote(Long noteId, Long userId) throws Exception {
+        Notes notes = noteRepo.findById(noteId)
+                .orElseThrow(() -> new DataNotFoundException("Node not found"));
+        if(notes.getUser().getId() != userId){
+            throw new DataNotFoundException("Note is not created by user");
+        }
+
+        notes.setPinned(false);
+
+        Notes savedNote = noteRepo.save(notes);
+
+        return noteMapper.toResponseDTO(savedNote);
+    }
 }

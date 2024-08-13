@@ -11,4 +11,8 @@ public interface NoteService {
     NoteResponse updateNote(Long noteId, NoteDTO noteDTO) throws Exception;
 
     void deleteNote(Long noteId, Long userId) throws Exception;
+
+    NoteResponse pinNote(Long noteId, Long userId) throws Exception;
+
+    NoteResponse unpinNote(Long noteId, Long userId) throws Exception;
 }
