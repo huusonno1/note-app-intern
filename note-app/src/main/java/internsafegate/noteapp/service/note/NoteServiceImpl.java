@@ -32,4 +32,12 @@ public class NoteServiceImpl implements NoteService{
 
         return noteMapper.toResponseDTO(savedNote);
     }
+
+    @Override
+    public NoteResponse getNoteByIds(Long noteId) throws Exception {
+        Notes notes = noteRepo.findById(noteId)
+                .orElseThrow(() -> new DataNotFoundException(String.format("Note %d is not found", noteId)));
+
+        return noteMapper.toResponseDTO(notes);
+    }
 }

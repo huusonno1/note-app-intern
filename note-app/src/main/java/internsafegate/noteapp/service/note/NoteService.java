@@ -5,4 +5,6 @@ import internsafegate.noteapp.dto.response.note.NoteResponse;
 
 public interface NoteService {
     NoteResponse createNote(NoteDTO noteDTO) throws Exception;
+
+    NoteResponse getNoteByIds(Long noteId) throws Exception;
 }
