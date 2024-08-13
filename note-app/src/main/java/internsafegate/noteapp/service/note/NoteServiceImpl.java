@@ -73,4 +73,14 @@ public class NoteServiceImpl implements NoteService{
 
         return noteMapper.toResponseDTO(savedNote);
     }
+
+    @Override
+    public void deleteNote(Long noteId, Long userId) throws Exception{
+        Notes notes = noteRepo.findById(noteId)
+                .orElseThrow(() -> new DataNotFoundException("Node not found"));
+        if(notes.getUser().getId() != userId){
+            throw new DataNotFoundException("Note is not created by user");
+        }
+        noteRepo.delete(notes);
+    }
 }

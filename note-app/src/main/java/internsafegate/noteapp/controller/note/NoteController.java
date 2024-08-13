@@ -76,5 +76,19 @@ public class NoteController {
                 .build());
     }
 //  DELETE
+    @DeleteMapping("/{noteId}")
+    public ResponseEntity<ResponseObject> deleteNotes(
+            @PathVariable Long noteId
+    ) throws Exception {
 
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        noteService.deleteNote( noteId, loggedInUser.getId());
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .data(null)
+                .message("Delete node successfully.")
+                .build());
+    }
 }

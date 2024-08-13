@@ -9,4 +9,6 @@ public interface NoteService {
     NoteResponse getNoteByIds(Long noteId) throws Exception;
 
     NoteResponse updateNote(Long noteId, NoteDTO noteDTO) throws Exception;
+
+    void deleteNote(Long noteId, Long userId) throws Exception;
 }
