@@ -43,4 +43,18 @@ public class TagServiceImpl implements TagService{
 
         return TagMapper.toResponseDTO(tag);
     }
+
+    @Override
+    public TagResponse deleteTag(Long noteId, Long tagId) throws Exception {
+        Tags tag = tagRepo.findById(tagId)
+                .orElseThrow(() -> new DataNotFoundException("Note not found for id: " + tagId));
+
+        Notes note = noteRepo.findById(noteId)
+                .orElseThrow(() -> new DataNotFoundException("Note not found for id: " + noteId));
+
+        note.getTags().remove(tag);
+        noteRepo.save(note);
+
+        return TagMapper.toResponseDTO(tag);
+    }
 }

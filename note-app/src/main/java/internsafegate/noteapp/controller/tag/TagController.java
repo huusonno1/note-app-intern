@@ -17,13 +17,12 @@ public class TagController {
 
     private final TagService tagService;
 
-    //    CREATE
-    @PostMapping ("/{nodeId}/create")
-    public ResponseEntity<ResponseObject> addTag(
+    @PostMapping ("/{noteId}/create")
+    public ResponseEntity<ResponseObject> addTagToNoteId(
             @RequestBody TagDTO tagDTO,
-            @PathVariable Long nodeId
+            @PathVariable Long noteId
     ) throws Exception {
-        TagResponse tagResponse = tagService.addTag(tagDTO, nodeId);
+        TagResponse tagResponse = tagService.addTag(tagDTO, noteId);
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.CREATED)
                 .data(tagResponse)
@@ -31,9 +30,18 @@ public class TagController {
                 .build());
     }
 
-//    READ
+    @DeleteMapping ("/{noteId}/delete/{tagId}")
+    public ResponseEntity<ResponseObject> deleteTagToNoteId(
+            @PathVariable Long noteId,
+            @PathVariable Long tagId
+    ) throws Exception {
 
-//    UPDATE
+        TagResponse tagResponse = tagService.deleteTag(noteId, tagId);
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .data(tagResponse)
+                .message("delete tag successful")
+                .build());
+    }
 
-//    DELETE
 }
