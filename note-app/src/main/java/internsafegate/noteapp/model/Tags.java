@@ -3,6 +3,8 @@ package internsafegate.noteapp.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "tags")
 @Getter
@@ -20,4 +22,7 @@ public class Tags extends BaseEntity{
 
     @Column(name = "is_active")
     private boolean isActive;
+
+    @ManyToMany(mappedBy = "tags")
+    private List<Notes> notes;
 }
