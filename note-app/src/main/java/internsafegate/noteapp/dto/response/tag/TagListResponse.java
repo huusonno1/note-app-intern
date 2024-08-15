@@ -1,0 +1,18 @@
+package internsafegate.noteapp.dto.response.tag;
+
+import internsafegate.noteapp.dto.response.note.NoteResponse;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class TagListResponse {
+    private List<TagResponse> tags;
+    private int totalPages;
+}

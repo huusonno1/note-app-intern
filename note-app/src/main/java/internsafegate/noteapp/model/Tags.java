@@ -23,6 +23,11 @@ public class Tags extends BaseEntity{
     @Column(name = "is_active")
     private boolean isActive;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private Users users;
+
     @ManyToMany(mappedBy = "tags")
     private List<Notes> notes;
+
 }
