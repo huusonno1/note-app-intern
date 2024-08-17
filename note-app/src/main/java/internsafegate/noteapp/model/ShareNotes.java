@@ -16,7 +16,7 @@ public class ShareNotes extends BaseEntity{
     private Long id;
 
     @Column(name = "is_contribution_accepted")
-    private boolean is_contribution_accepted ;
+    private boolean contributionAccepted ;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "note_id")

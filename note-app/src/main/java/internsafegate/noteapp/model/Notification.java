@@ -19,7 +19,7 @@ public class Notification {
     private NotificationType notificationType;
 
     @Column(name = "is_read")
-    private boolean is_read ;
+    private boolean isRead ;
 
     @Column(name = "message")
     private String message;
@@ -27,4 +27,9 @@ public class Notification {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private Users owner;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "share_note_id")
+    private ShareNotes shareNote;
+
 }
