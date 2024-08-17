@@ -43,6 +43,45 @@ public class ShareNoteServiceImpl implements ShareNoteService{
         return ShareNoteMapper.toResponseDTO(savedShareNote);
     }
 
+    @Override
+    public ShareNoteResponse getShareNoteById(Long shareId, Long senderId) throws Exception {
+        ShareNotes shareNotes = shareNoteRepo.findById(shareId)
+                .orElseThrow(() -> new DataNotFoundException("Not found share note id"));
+
+        if(shareNotes.getSender().getId() != senderId){
+            throw new DataNotFoundException("User dont have share note id" + shareId);
+        }
+
+        return ShareNoteMapper.toResponseDTO(shareNotes);
+    }
+
+    @Override
+    public ShareNoteResponse acceptOrRejectShareNoteId(ShareNoteDTO shareNoteDTO, Long shareId, Long receiverId) throws Exception {
+        ShareNotes shareNotes = shareNoteRepo.findById(shareId)
+                .orElseThrow(() -> new DataNotFoundException("Not found share note id"));
+        if(shareNotes.getReceiver().getId() != receiverId){
+            throw new DataNotFoundException("User dont have share note id" + shareId);
+        }
+        boolean contribution = shareNoteDTO.isContributionAccepted();
+        if(shareNotes.isContributionAccepted() != contribution){
+            shareNotes.setContributionAccepted(contribution);
+        }
+        ShareNotes saved = shareNoteRepo.save(shareNotes);
+        return ShareNoteMapper.toResponseDTO(saved);
+    }
+
+    @Override
+    public void cancelShareNoteId(Long shareId, Long senderId) throws Exception {
+        ShareNotes shareNotes = shareNoteRepo.findById(shareId)
+                .orElseThrow(() -> new DataNotFoundException("ShareNotes not found for id: " + shareId));
+        if(shareNotes.getSender().getId() != senderId){
+            throw new DataNotFoundException("ShareNotes is not created by user");
+        }
+        shareNoteRepo.delete(shareNotes);
+
+    }
+
+
     private void createNotification(Users receiver, ShareNotes savedShareNote) {
         Notification notification = Notification.builder()
                 .owner(receiver)
