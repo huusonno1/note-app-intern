@@ -12,4 +12,6 @@ public interface NoteContentService {
     ListNoteContentResponse getListNoteContent(Long noteId, PageRequest pageRequest) throws Exception;
 
     NoteContentResponse updateNoteContent(Long noteContentId, NoteContentDTO noteContentDTO, Long ownerId, MultipartFile file) throws Exception;
+
+    void deleteNoteContent(Long noteContentId, Long ownerId) throws Exception;
 }

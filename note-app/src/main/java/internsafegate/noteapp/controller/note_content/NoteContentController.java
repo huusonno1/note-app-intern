@@ -73,4 +73,20 @@ public class NoteContentController {
                 .message("Account update note-content successful")
                 .build());
     }
+
+    @DeleteMapping("{noteContentId}")
+    public ResponseEntity<ResponseObject> getListNoteContent(
+            @PathVariable Long noteContentId
+    ) throws Exception {
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        noteContentService
+                .deleteNoteContent(noteContentId, loggedInUser.getId());
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .data(null)
+                .message("Account delete note-content successful")
+                .build());
+    }
 }

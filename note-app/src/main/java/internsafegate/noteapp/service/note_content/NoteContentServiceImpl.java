@@ -136,5 +136,18 @@ public class NoteContentServiceImpl implements NoteContentService{
         return NoteContentMapper.toResponseDTO(saved);
     }
 
+    @Override
+    public void deleteNoteContent(
+            Long noteContentId,
+            Long ownerId
+    ) throws Exception {
+        NoteContent noteContent = noteContentRepo.findById(noteContentId)
+                .orElseThrow(() -> new DataNotFoundException("Not found note-content by note-content id"));
 
+        Users owner = userRepo.findById(ownerId)
+                .orElseThrow(() -> new DataNotFoundException("Not found user by owner id"));
+        // check owner co duoc share noteId khong
+
+        noteContentRepo.delete(noteContent);
+    }
 }
