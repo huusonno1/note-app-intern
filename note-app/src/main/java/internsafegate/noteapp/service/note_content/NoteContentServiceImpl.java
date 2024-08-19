@@ -3,6 +3,7 @@ package internsafegate.noteapp.service.note_content;
 import internsafegate.noteapp.dto.request.note_content.NoteContentDTO;
 import internsafegate.noteapp.dto.response.note_content.NoteContentResponse;
 import internsafegate.noteapp.exception.DataNotFoundException;
+import internsafegate.noteapp.mapper.NoteContentMapper;
 import internsafegate.noteapp.model.NoteContent;
 import internsafegate.noteapp.model.Notes;
 import internsafegate.noteapp.model.Users;
@@ -38,21 +39,17 @@ public class NoteContentServiceImpl implements NoteContentService{
         }
         Users owner = userRepo.findById(ownerId)
                 .orElseThrow(() -> new DataNotFoundException("Not found user by owner id"));
-        NoteContent noteContent = NoteContent.builder()
-                .contentType(noteContentDTO.getContentType())
-                .textContent(noteContentDTO.getTextContent())
-                .statusNoteContent(noteContentDTO.getStatusNoteContent())
-                .notes(notes)
-                .user(owner)
-                .build();
 
         //set image_url
         String image_url  = file.getOriginalFilename();
 
-        noteContent.setImageUrl(image_url);
+        NoteContent noteContent = NoteContentMapper
+                .toEntity(noteContentDTO, owner, notes, image_url);
 
-        noteContentRepo.save(noteContent);
+        NoteContent saved = noteContentRepo.save(noteContent);
 
-        return null;
+        // set note_log_version
+
+        return NoteContentMapper.toResponseDTO(saved);
     }
 }

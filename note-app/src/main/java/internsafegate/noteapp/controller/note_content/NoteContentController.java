@@ -22,7 +22,7 @@ public class NoteContentController {
     @PostMapping("/create")
     public ResponseEntity<ResponseObject> createNotes(
             @RequestPart("NoteContentDTO") NoteContentDTO noteContentDTO,
-            @RequestPart("file") MultipartFile file
+            @RequestPart("FileImage") MultipartFile file
     ) throws Exception {
         Users loggedInUser= securityUtils.getLoggedInUser();
 
