@@ -60,7 +60,10 @@ public class NoteContentServiceImpl implements NoteContentService{
     }
 
     @Override
-    public ListNoteContentResponse getListNoteContent(Long noteId, PageRequest pageRequest) throws Exception {
+    public ListNoteContentResponse getListNoteContent(
+            Long noteId,
+            PageRequest pageRequest
+    ) throws Exception {
         Page<NoteContent> noteContentPage = noteContentRepo.getAllNoteContent(noteId, pageRequest);
         if(noteContentPage == null) {
             throw new DataNotFoundException("Failed to fetch noteContent: noteContentPage is null");
@@ -85,5 +88,53 @@ public class NoteContentServiceImpl implements NoteContentService{
                 .totalPages(noteContentPage.getTotalPages())
                 .build();
     }
+
+    @Override
+    public NoteContentResponse updateNoteContent(
+            Long noteContentId,
+            NoteContentDTO noteContentDTO,
+            Long ownerId,
+            MultipartFile file
+    ) throws Exception {
+        NoteContent noteContent = noteContentRepo.findById(noteContentId)
+                .orElseThrow(() -> new DataNotFoundException("Not found note-content by note-content id"));
+
+        Users owner = userRepo.findById(ownerId)
+                .orElseThrow(() -> new DataNotFoundException("Not found user by owner id"));
+        if(noteContent.getUser().getId() != ownerId
+        ){
+            noteContent.setUser(owner);
+        }
+        if(noteContentDTO.getStatusNoteContent() != null &&
+                noteContentDTO.getStatusNoteContent() != noteContent.getStatusNoteContent()
+        ){
+            noteContent.setStatusNoteContent(noteContentDTO.getStatusNoteContent());
+        }
+        if(noteContentDTO.getContentType() != null &&
+                noteContentDTO.getContentType() != noteContent.getContentType()
+        ){
+            noteContent.setContentType(noteContentDTO.getContentType());
+        }
+        if(noteContentDTO.getTextContent() != null &&
+                noteContentDTO.getTextContent() != noteContent.getTextContent()
+        ){
+            noteContent.setTextContent(noteContentDTO.getTextContent());
+        }
+
+        if(!file.isEmpty()){
+            //set image_url base
+            String image_url  = file.getOriginalFilename();
+
+            noteContent.setImageUrl(image_url);
+        }
+
+
+        NoteContent saved = noteContentRepo.save(noteContent);
+
+        // set note_log_version
+
+        return NoteContentMapper.toResponseDTO(saved);
+    }
+
 
 }

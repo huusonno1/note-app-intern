@@ -55,4 +55,22 @@ public class NoteContentController {
                 .message("Account created note successful")
                 .build());
     }
+
+    @PutMapping("{noteContentId}")
+    public ResponseEntity<ResponseObject> getListNoteContent(
+            @PathVariable Long noteContentId,
+            @RequestPart("NoteContentDTO") NoteContentDTO noteContentDTO,
+            @RequestPart("FileImage") MultipartFile file
+    ) throws Exception {
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        NoteContentResponse noteContentResponse = noteContentService
+                .updateNoteContent(noteContentId, noteContentDTO, loggedInUser.getId(), file);
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .data(noteContentResponse)
+                .message("Account update note-content successful")
+                .build());
+    }
 }
