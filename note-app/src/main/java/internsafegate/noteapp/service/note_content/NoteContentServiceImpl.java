@@ -1,6 +1,7 @@
 package internsafegate.noteapp.service.note_content;
 
 import internsafegate.noteapp.dto.request.note_content.NoteContentDTO;
+import internsafegate.noteapp.dto.response.note_content.ListNoteContentResponse;
 import internsafegate.noteapp.dto.response.note_content.NoteContentResponse;
 import internsafegate.noteapp.exception.DataNotFoundException;
 import internsafegate.noteapp.mapper.NoteContentMapper;
@@ -11,8 +12,13 @@ import internsafegate.noteapp.repository.NoteContentRepository;
 import internsafegate.noteapp.repository.NoteRepository;
 import internsafegate.noteapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,4 +58,32 @@ public class NoteContentServiceImpl implements NoteContentService{
 
         return NoteContentMapper.toResponseDTO(saved);
     }
+
+    @Override
+    public ListNoteContentResponse getListNoteContent(Long noteId, PageRequest pageRequest) throws Exception {
+        Page<NoteContent> noteContentPage = noteContentRepo.getAllNoteContent(noteId, pageRequest);
+        if(noteContentPage == null) {
+            throw new DataNotFoundException("Failed to fetch noteContent: noteContentPage is null");
+        }
+        List<NoteContentResponse> listNoteContentResponses = noteContentPage.getContent().stream()
+                .map(noteContent -> {
+                    NoteContentResponse noteContentResponse = new NoteContentResponse();
+                    noteContentResponse.setId(noteContent.getId());
+                    noteContentResponse.setContentType(noteContent.getContentType().name());
+                    noteContentResponse.setTextContent(noteContent.getTextContent());
+                    noteContentResponse.setImageUrl(noteContent.getImageUrl());
+                    noteContentResponse.setStatusNoteContent(noteContent.getStatusNoteContent().name());
+                    noteContentResponse.setNoteId(noteContent.getNotes().getId());
+                    noteContentResponse.setOwnerId(noteContent.getUser().getId());
+
+                    return noteContentResponse;
+                })
+                .collect(Collectors.toList());
+
+        return ListNoteContentResponse.builder()
+                .noteContents(listNoteContentResponses)
+                .totalPages(noteContentPage.getTotalPages())
+                .build();
+    }
+
 }
