@@ -148,6 +148,8 @@ public class NoteContentServiceImpl implements NoteContentService{
                 .orElseThrow(() -> new DataNotFoundException("Not found user by owner id"));
         // check owner co duoc share noteId khong
 
+        // note-log
+
         noteContentRepo.delete(noteContent);
     }
 }
