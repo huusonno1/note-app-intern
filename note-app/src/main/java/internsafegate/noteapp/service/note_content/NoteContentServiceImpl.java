@@ -149,7 +149,8 @@ public class NoteContentServiceImpl implements NoteContentService{
         // check owner co duoc share noteId khong
 
         // note-log
-
-        noteContentRepo.delete(noteContent);
+        noteContent.setUser(owner);
+        NoteContent saved = noteContentRepo.save(noteContent);
+        noteContentRepo.delete(saved);
     }
 }
