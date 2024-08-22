@@ -11,7 +11,9 @@ import internsafegate.noteapp.model.Users;
 import internsafegate.noteapp.repository.NoteContentRepository;
 import internsafegate.noteapp.repository.NoteRepository;
 import internsafegate.noteapp.repository.UserRepository;
+import internsafegate.noteapp.service.awss3.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,9 +26,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NoteContentServiceImpl implements NoteContentService{
 
+    private final S3Service s3Service;
+
     private final NoteRepository noteRepo;
     private final UserRepository userRepo;
     private final NoteContentRepository noteContentRepo;
+
+    @Value("${aws.cloudfront.domainName}")
+    private String domainName;
 
     @Override
     public NoteContentResponse createNoteContent(
@@ -47,7 +54,10 @@ public class NoteContentServiceImpl implements NoteContentService{
                 .orElseThrow(() -> new DataNotFoundException("Not found user by owner id"));
 
         //set image_url
-        String image_url  = file.getOriginalFilename();
+        String image_url = "";
+        if(noteContentDTO.getContentType().name().equals("IMAGE")){
+            image_url  = "https://" + domainName +"/"+ s3Service.uploadFile(file);
+        }
 
         NoteContent noteContent = NoteContentMapper
                 .toEntity(noteContentDTO, owner, notes, image_url);
@@ -123,7 +133,7 @@ public class NoteContentServiceImpl implements NoteContentService{
 
         if(!file.isEmpty()){
             //set image_url base
-            String image_url  = file.getOriginalFilename();
+            String image_url = "https://" + domainName +"/"+ s3Service.uploadFile(file);
 
             noteContent.setImageUrl(image_url);
         }
