@@ -10,4 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     @Query("SELECT n FROM Notification n WHERE n.owner.id = ?1")
     Page<Notification> getAllNotifications(Long ownerId, PageRequest pageRequest);
+    @Query("SELECT n FROM Notification n WHERE n.shareNote.id = ?1")
+    Notification findByShareNoteId(Long shareId);
 }

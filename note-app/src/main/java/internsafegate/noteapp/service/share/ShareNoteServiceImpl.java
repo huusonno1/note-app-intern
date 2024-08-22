@@ -77,6 +77,8 @@ public class ShareNoteServiceImpl implements ShareNoteService{
         if(shareNotes.getSender().getId() != senderId){
             throw new DataNotFoundException("ShareNotes is not created by user");
         }
+        Notification notification = notificationRepo.findByShareNoteId(shareId);
+        notificationRepo.delete(notification);
         shareNoteRepo.delete(shareNotes);
 
     }

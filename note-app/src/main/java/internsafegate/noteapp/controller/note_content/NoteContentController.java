@@ -24,9 +24,11 @@ public class NoteContentController {
     @PostMapping("/create")
     public ResponseEntity<ResponseObject> createNoteContent(
             @RequestPart("NoteContentDTO") NoteContentDTO noteContentDTO,
-            @RequestPart("FileImage") MultipartFile file
+            @RequestPart("FileImage") MultipartFile file,
+            @PathVariable Long noteId
     ) throws Exception {
         Users loggedInUser= securityUtils.getLoggedInUser();
+        noteContentDTO.setNoteId(noteId);
 
         NoteContentResponse noteContentResponse = noteContentService
                 .createNoteContent(noteContentDTO, loggedInUser.getId(), file);

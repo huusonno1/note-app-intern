@@ -27,6 +27,7 @@ public class TagServiceImpl implements TagService{
 
     private final UserRepository userRepo;
 
+//  Add tag by NoteId
     @Override
     public TagResponse addTag(TagDTO tagDTO, Long noteId) throws Exception {
         Optional<Tags> existingTag = tagRepo.findByName(tagDTO.getNameTag());
@@ -51,6 +52,7 @@ public class TagServiceImpl implements TagService{
         return TagMapper.toResponseDTO(tag);
     }
 
+//  Delete Tag by NoteId
     @Override
     public TagResponse deleteTag(Long noteId, Long tagId) throws Exception {
         Tags tag = tagRepo.findById(tagId)
@@ -65,6 +67,7 @@ public class TagServiceImpl implements TagService{
         return TagMapper.toResponseDTO(tag);
     }
 
+//
     @Override
     public TagResponse createTag(TagDTO tagDTO, Long userId) throws Exception {
         Users users = userRepo.findById(userId)
