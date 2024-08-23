@@ -4,9 +4,12 @@ import internsafegate.noteapp.dto.request.note.NoteDTO;
 import internsafegate.noteapp.dto.response.note.NoteListResponse;
 import internsafegate.noteapp.dto.response.note.NoteResponse;
 import internsafegate.noteapp.exception.DataNotFoundException;
+import internsafegate.noteapp.mapper.NoteContentMapper;
 import internsafegate.noteapp.mapper.NoteMapper;
+import internsafegate.noteapp.model.NoteContent;
 import internsafegate.noteapp.model.Notes;
 import internsafegate.noteapp.model.Users;
+import internsafegate.noteapp.repository.NoteContentRepository;
 import internsafegate.noteapp.repository.NoteRepository;
 import internsafegate.noteapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,7 @@ public class NoteServiceImpl implements NoteService{
     private final NoteRepository noteRepo;
 
     private final NoteMapper noteMapper;
+    private final NoteContentRepository noteContentRepo;
 
     @Override
     public NoteResponse createNote(NoteDTO noteDTO) throws Exception {
@@ -35,6 +39,16 @@ public class NoteServiceImpl implements NoteService{
         Notes note = noteMapper.toEntity(noteDTO, users);
 
         Notes savedNote = noteRepo.save(note);
+
+        List<NoteContent> noteContents = noteDTO.getNoteContentDTOS().stream()
+                .map(contentDTO -> NoteContentMapper.toEntity(contentDTO, users, savedNote))
+                .collect(Collectors.toList());
+
+        noteContentRepo.saveAll(noteContents);
+
+
+        savedNote.setNoteContents(noteContents);
+
 
         return noteMapper.toResponseDTO(savedNote);
     }

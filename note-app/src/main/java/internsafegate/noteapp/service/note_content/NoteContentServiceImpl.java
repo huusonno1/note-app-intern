@@ -26,20 +26,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NoteContentServiceImpl implements NoteContentService{
 
-    private final S3Service s3Service;
-
     private final NoteRepository noteRepo;
     private final UserRepository userRepo;
     private final NoteContentRepository noteContentRepo;
 
-    @Value("${aws.cloudfront.domainName}")
-    private String domainName;
+
 
     @Override
     public NoteContentResponse createNoteContent(
             NoteContentDTO noteContentDTO,
-            Long ownerId,
-            MultipartFile file
+            Long ownerId
     ) throws Exception {
         Notes notes = noteRepo.findById(noteContentDTO.getNoteId())
                 .orElseThrow(() -> new DataNotFoundException("Not found note by note id"));
@@ -53,18 +49,12 @@ public class NoteContentServiceImpl implements NoteContentService{
         Users owner = userRepo.findById(ownerId)
                 .orElseThrow(() -> new DataNotFoundException("Not found user by owner id"));
 
-        //set image_url
-        String image_url = "";
-        if(noteContentDTO.getContentType().name().equals("IMAGE")){
-            image_url  = "https://" + domainName +"/"+ s3Service.uploadFile(file);
-        }
-
         NoteContent noteContent = NoteContentMapper
-                .toEntity(noteContentDTO, owner, notes, image_url);
+                .toEntity(noteContentDTO, owner, notes);
 
         NoteContent saved = noteContentRepo.save(noteContent);
 
-        // set note_log_version
+
 
         return NoteContentMapper.toResponseDTO(saved);
     }
@@ -103,8 +93,7 @@ public class NoteContentServiceImpl implements NoteContentService{
     public NoteContentResponse updateNoteContent(
             Long noteContentId,
             NoteContentDTO noteContentDTO,
-            Long ownerId,
-            MultipartFile file
+            Long ownerId
     ) throws Exception {
         NoteContent noteContent = noteContentRepo.findById(noteContentId)
                 .orElseThrow(() -> new DataNotFoundException("Not found note-content by note-content id"));
@@ -130,14 +119,11 @@ public class NoteContentServiceImpl implements NoteContentService{
         ){
             noteContent.setTextContent(noteContentDTO.getTextContent());
         }
-
-        if(!file.isEmpty()){
-            //set image_url base
-            String image_url = "https://" + domainName +"/"+ s3Service.uploadFile(file);
-
-            noteContent.setImageUrl(image_url);
+        if(noteContentDTO.getImageUrl() != null &&
+                noteContentDTO.getImageUrl() != noteContent.getImageUrl()
+        ){
+            noteContent.setImageUrl(noteContentDTO.getImageUrl());
         }
-
 
         NoteContent saved = noteContentRepo.save(noteContent);
 

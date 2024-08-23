@@ -26,7 +26,7 @@ public class NoteDTO {
     @JsonProperty("tags")
     private List<String> tags;
 
-    @JsonProperty("status_notes")
+    @JsonProperty("status_note")
     @Enumerated(EnumType.STRING)
     private NoteStatus statusNotes;
 

@@ -23,15 +23,14 @@ public class NoteContentController {
 
     @PostMapping("/create")
     public ResponseEntity<ResponseObject> createNoteContent(
-            @RequestPart("NoteContentDTO") NoteContentDTO noteContentDTO,
-            @RequestPart("FileImage") MultipartFile file,
+            @RequestBody NoteContentDTO noteContentDTO,
             @PathVariable Long noteId
     ) throws Exception {
         Users loggedInUser= securityUtils.getLoggedInUser();
         noteContentDTO.setNoteId(noteId);
 
         NoteContentResponse noteContentResponse = noteContentService
-                .createNoteContent(noteContentDTO, loggedInUser.getId(), file);
+                .createNoteContent(noteContentDTO, loggedInUser.getId());
 
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.CREATED)
@@ -59,7 +58,7 @@ public class NoteContentController {
     }
 
     @PutMapping("{noteContentId}")
-    public ResponseEntity<ResponseObject> getListNoteContent(
+    public ResponseEntity<ResponseObject> updateNoteContent(
             @PathVariable Long noteContentId,
             @RequestPart("NoteContentDTO") NoteContentDTO noteContentDTO,
             @RequestPart("FileImage") MultipartFile file
@@ -67,7 +66,7 @@ public class NoteContentController {
         Users loggedInUser= securityUtils.getLoggedInUser();
 
         NoteContentResponse noteContentResponse = noteContentService
-                .updateNoteContent(noteContentId, noteContentDTO, loggedInUser.getId(), file);
+                .updateNoteContent(noteContentId, noteContentDTO, loggedInUser.getId());
 
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.OK)
@@ -77,7 +76,7 @@ public class NoteContentController {
     }
 
     @DeleteMapping("{noteContentId}")
-    public ResponseEntity<ResponseObject> getListNoteContent(
+    public ResponseEntity<ResponseObject> deleteNoteContent(
             @PathVariable Long noteContentId
     ) throws Exception {
         Users loggedInUser= securityUtils.getLoggedInUser();

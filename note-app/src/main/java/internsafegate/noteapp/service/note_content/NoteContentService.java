@@ -7,11 +7,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface NoteContentService {
-    NoteContentResponse createNoteContent(NoteContentDTO noteContentDTO, Long ownerId, MultipartFile file) throws Exception;
+    NoteContentResponse createNoteContent(NoteContentDTO noteContentDTO, Long ownerId) throws Exception;
 
     ListNoteContentResponse getListNoteContent(Long noteId, PageRequest pageRequest) throws Exception;
 
-    NoteContentResponse updateNoteContent(Long noteContentId, NoteContentDTO noteContentDTO, Long ownerId, MultipartFile file) throws Exception;
+    NoteContentResponse updateNoteContent(Long noteContentId, NoteContentDTO noteContentDTO, Long ownerId) throws Exception;
 
     void deleteNoteContent(Long noteContentId, Long ownerId) throws Exception;
 }

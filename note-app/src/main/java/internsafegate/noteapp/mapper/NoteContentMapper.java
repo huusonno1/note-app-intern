@@ -25,14 +25,13 @@ public class NoteContentMapper {
     public static NoteContent toEntity(
             NoteContentDTO noteContentDTO,
             Users user,
-            Notes notes,
-            String imageUrl
+            Notes notes
     ) {
         return NoteContent.builder()
                 .contentType(noteContentDTO.getContentType())
                 .textContent(noteContentDTO.getTextContent())
                 .statusNoteContent(noteContentDTO.getStatusNoteContent())
-                .imageUrl(imageUrl)
+                .imageUrl(noteContentDTO.getImageUrl())
                 .user(user)
                 .notes(notes)
                 .build();
