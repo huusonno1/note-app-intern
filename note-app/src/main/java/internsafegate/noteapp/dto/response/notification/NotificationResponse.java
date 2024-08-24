@@ -28,6 +28,9 @@ public class NotificationResponse {
     @JsonProperty("owner_id")
     private Long ownerId;
 
+    @JsonProperty("sender")
+    private String sender;
+
     @JsonProperty("created_at")
     private Date createAt;
 }

@@ -2,6 +2,7 @@ package internsafegate.noteapp.controller.share;
 
 import internsafegate.noteapp.dto.request.share.ShareNoteDTO;
 import internsafegate.noteapp.dto.response.ResponseObject;
+import internsafegate.noteapp.dto.response.share.ListShareNoteResponse;
 import internsafegate.noteapp.dto.response.share.ShareNoteResponse;
 import internsafegate.noteapp.model.Users;
 import internsafegate.noteapp.security.SecurityUtils;
@@ -48,6 +49,19 @@ public class ShareNoteController {
                 .build());
     }
 //    get share notes
+    @GetMapping("")
+    public ResponseEntity<ResponseObject> getShareNotes(
+    ) throws Exception{
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        ListShareNoteResponse shareNoteResponse = shareNoteService.getShareNotes(loggedInUser.getId());
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .data(shareNoteResponse)
+                .message("Get note shared successfully")
+                .build());
+    }
 
     @PutMapping("/{shareId}")
     public ResponseEntity<ResponseObject> acceptOrRejectShareNoteId(

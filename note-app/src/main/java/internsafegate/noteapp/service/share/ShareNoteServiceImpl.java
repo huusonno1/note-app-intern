@@ -1,6 +1,7 @@
 package internsafegate.noteapp.service.share;
 
 import internsafegate.noteapp.dto.request.share.ShareNoteDTO;
+import internsafegate.noteapp.dto.response.share.ListShareNoteResponse;
 import internsafegate.noteapp.dto.response.share.ShareNoteResponse;
 import internsafegate.noteapp.exception.DataNotFoundException;
 import internsafegate.noteapp.mapper.ShareNoteMapper;
@@ -81,6 +82,11 @@ public class ShareNoteServiceImpl implements ShareNoteService{
         notificationRepo.delete(notification);
         shareNoteRepo.delete(shareNotes);
 
+    }
+
+    @Override
+    public ListShareNoteResponse getShareNotes(Long senderId) throws Exception {
+        return null;
     }
 
 

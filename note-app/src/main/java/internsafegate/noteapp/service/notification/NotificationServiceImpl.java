@@ -46,6 +46,7 @@ public class NotificationServiceImpl implements NotificationService{
                     notificationResponse.setRead(notification.isRead());
                     notificationResponse.setMessage(notification.getMessage());
                     notificationResponse.setOwnerId(ownerId);
+                    notificationResponse.setSender(notification.getShareNote().getSender().getUsername());
                     notificationResponse.setCreateAt(null);
 
                     return notificationResponse;
