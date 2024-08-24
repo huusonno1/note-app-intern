@@ -4,6 +4,7 @@ import internsafegate.noteapp.dto.request.note.NoteDTO;
 import internsafegate.noteapp.dto.response.note.NoteListResponse;
 import internsafegate.noteapp.dto.response.note.NoteResponse;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 public interface NoteService {
     NoteResponse createNote(NoteDTO noteDTO) throws Exception;
@@ -21,4 +22,6 @@ public interface NoteService {
     NoteListResponse getListNotes(Long userId, PageRequest pageRequest) throws Exception;
 
     NoteListResponse getListNotesByTag(Long userId, String tag, PageRequest pageRequest) throws Exception;
+
+    NoteListResponse searchNotes(Long userId, String keyword, Pageable pageable) throws Exception;
 }
