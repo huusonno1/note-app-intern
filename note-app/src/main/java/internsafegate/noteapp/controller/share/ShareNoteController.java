@@ -8,6 +8,7 @@ import internsafegate.noteapp.model.Users;
 import internsafegate.noteapp.security.SecurityUtils;
 import internsafegate.noteapp.service.share.ShareNoteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,10 +52,14 @@ public class ShareNoteController {
 //    get share notes
     @GetMapping("")
     public ResponseEntity<ResponseObject> getShareNotes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit
     ) throws Exception{
+        PageRequest pageRequest = PageRequest.of(page, limit);
+
         Users loggedInUser= securityUtils.getLoggedInUser();
 
-        ListShareNoteResponse shareNoteResponse = shareNoteService.getShareNotes(loggedInUser.getId());
+        ListShareNoteResponse shareNoteResponse = shareNoteService.getShareNotes(loggedInUser.getId(), pageRequest);
 
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.OK)
