@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface NoteRepository extends JpaRepository<Notes, Long> {
     @Query("SELECT n FROM Notes n WHERE n.user.id = ?1 ORDER BY n.isPinned DESC, n.numberOrder ASC ")
     Page<Notes> getAllNotes(Long userId, PageRequest pageRequest);
+    @Query("SELECT n FROM Notes n JOIN n.tags t WHERE n.user.id = ?1 AND t.nameTag = ?2 ORDER BY n.isPinned DESC, n.numberOrder ASC ")
+    Page<Notes> getAllNotesByTag(Long userId, String tagId, PageRequest pageRequest);
 }

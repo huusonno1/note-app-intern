@@ -76,7 +76,27 @@ public class NoteController {
     }
 
 //    List Notes by Tag
+    @GetMapping("/list-notes-by-tag")
+    public ResponseEntity<ResponseObject> getListNotesByTag(
+            @RequestParam String nameTag,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) throws Exception {
+
+        PageRequest pageRequest = PageRequest.of(page, limit);
+
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        NoteListResponse noteListResponse = noteService.getListNotesByTag(loggedInUser.getId(), nameTag, pageRequest);
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.FOUND)
+                .data(noteListResponse)
+                .message("Get list notes successfully.")
+                .build());
+    }
 //    Search Notes by Title
+
 //    Filter Notes by Status
 
 //  UPDATE

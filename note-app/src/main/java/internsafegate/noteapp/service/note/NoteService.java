@@ -19,4 +19,6 @@ public interface NoteService {
     NoteResponse unpinNote(Long noteId, Long userId) throws Exception;
 
     NoteListResponse getListNotes(Long userId, PageRequest pageRequest) throws Exception;
+
+    NoteListResponse getListNotesByTag(Long userId, String tag, PageRequest pageRequest) throws Exception;
 }
