@@ -2,6 +2,7 @@ package internsafegate.noteapp.dto.request.note;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import internsafegate.noteapp.dto.request.note_content.NoteContentDTO;
+import internsafegate.noteapp.dto.request.tag.TagDTO;
 import internsafegate.noteapp.model.NoteStatus;
 import internsafegate.noteapp.model.Users;
 import jakarta.persistence.*;
@@ -24,9 +25,9 @@ public class NoteDTO {
     private boolean isPinned;
 
     @JsonProperty("tags")
-    private List<String> tags;
+    private List<TagDTO> tags;
 
-    @JsonProperty("status_note")
+    @JsonProperty("status_notes")
     @Enumerated(EnumType.STRING)
     private NoteStatus statusNotes;
 

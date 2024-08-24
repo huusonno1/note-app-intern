@@ -9,4 +9,7 @@ import java.util.Optional;
 public interface TagRepository extends JpaRepository<Tags, Long> {
     @Query("SELECT t FROM Tags t WHERE t.nameTag = ?1")
     Optional<Tags> findByName(String nameTag);
+
+    @Query("SELECT t FROM Tags t WHERE t.nameTag = ?1 and t.users.id = ?2")
+    Tags findByNameAndUserId(String nameTag, Long userId);
 }

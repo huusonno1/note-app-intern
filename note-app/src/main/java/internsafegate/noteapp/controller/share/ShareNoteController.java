@@ -47,6 +47,7 @@ public class ShareNoteController {
                 .message("Get note shared successfully")
                 .build());
     }
+//    get share notes
 
     @PutMapping("/{shareId}")
     public ResponseEntity<ResponseObject> acceptOrRejectShareNoteId(

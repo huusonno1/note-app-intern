@@ -3,16 +3,21 @@ package internsafegate.noteapp.service.note;
 import internsafegate.noteapp.dto.request.note.NoteDTO;
 import internsafegate.noteapp.dto.response.note.NoteListResponse;
 import internsafegate.noteapp.dto.response.note.NoteResponse;
+import internsafegate.noteapp.dto.response.tag.TagResponse;
 import internsafegate.noteapp.exception.DataNotFoundException;
 import internsafegate.noteapp.mapper.NoteContentMapper;
 import internsafegate.noteapp.mapper.NoteMapper;
+import internsafegate.noteapp.mapper.TagMapper;
 import internsafegate.noteapp.model.NoteContent;
 import internsafegate.noteapp.model.Notes;
+import internsafegate.noteapp.model.Tags;
 import internsafegate.noteapp.model.Users;
 import internsafegate.noteapp.repository.NoteContentRepository;
 import internsafegate.noteapp.repository.NoteRepository;
+import internsafegate.noteapp.repository.TagRepository;
 import internsafegate.noteapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
@@ -30,6 +35,7 @@ public class NoteServiceImpl implements NoteService{
 
     private final NoteMapper noteMapper;
     private final NoteContentRepository noteContentRepo;
+    private final TagRepository tagRepo;
 
     @Override
     public NoteResponse createNote(NoteDTO noteDTO) throws Exception {
@@ -40,15 +46,30 @@ public class NoteServiceImpl implements NoteService{
 
         Notes savedNote = noteRepo.save(note);
 
+
         List<NoteContent> noteContents = noteDTO.getNoteContentDTOS().stream()
                 .map(contentDTO -> NoteContentMapper.toEntity(contentDTO, users, savedNote))
                 .collect(Collectors.toList());
 
         noteContentRepo.saveAll(noteContents);
 
+        List<Tags> tagsList = noteDTO.getTags().stream()
+                .map(tagDTO -> {
+                    Tags existingTag = tagRepo.findByNameAndUserId(tagDTO.getNameTag(), users.getId());
+                    if (existingTag == null) {
+                        tagDTO.setActive(true);
+                        Tags newTag = TagMapper.toEntity(tagDTO, users);
+                        return tagRepo.save(newTag);
+                    } else {
+                        return existingTag;
+                    }
+                })
+                .collect(Collectors.toList());
+
+        savedNote.setTags(tagsList);
+        noteRepo.save(savedNote);
 
         savedNote.setNoteContents(noteContents);
-
 
         return noteMapper.toResponseDTO(savedNote);
     }
@@ -87,7 +108,6 @@ public class NoteServiceImpl implements NoteService{
         if(noteDTO.getNumberOrder() != null && noteDTO.getNumberOrder() != notes.getNumberOrder()) {
             notes.setNumberOrder(noteDTO.getNumberOrder());
         }
-
 
         Notes savedNote = noteRepo.save(notes);
 
@@ -149,7 +169,7 @@ public class NoteServiceImpl implements NoteService{
                     noteResponse.setPinned(note.isPinned());
                     noteResponse.setNumberOrder(note.getNumberOrder());
                     noteResponse.setOwnerId(note.getUser().getId());
-
+                    noteResponse.setTags(TagMapper.toListTagResponse(note.getTags()));
                     return noteResponse;
                 })
                 .collect(Collectors.toList());

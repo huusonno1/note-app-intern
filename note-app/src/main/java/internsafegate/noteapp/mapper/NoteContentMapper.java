@@ -2,11 +2,15 @@ package internsafegate.noteapp.mapper;
 
 import internsafegate.noteapp.dto.request.note.NoteDTO;
 import internsafegate.noteapp.dto.request.note_content.NoteContentDTO;
+import internsafegate.noteapp.dto.response.note.NoteResponse;
 import internsafegate.noteapp.dto.response.note_content.NoteContentResponse;
 import internsafegate.noteapp.model.NoteContent;
 import internsafegate.noteapp.model.Notes;
 import internsafegate.noteapp.model.Users;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class NoteContentMapper {
@@ -35,5 +39,11 @@ public class NoteContentMapper {
                 .user(user)
                 .notes(notes)
                 .build();
+    }
+
+    public static List<NoteContentResponse> toListNoteContentResponse(List<NoteContent> noteContents) {
+        return noteContents.stream()
+                .map(NoteContentMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 }

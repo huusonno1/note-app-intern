@@ -3,6 +3,7 @@ package internsafegate.noteapp.dto.response.note;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import internsafegate.noteapp.dto.request.note_content.NoteContentDTO;
 import internsafegate.noteapp.dto.response.note_content.NoteContentResponse;
+import internsafegate.noteapp.dto.response.tag.TagResponse;
 import internsafegate.noteapp.model.NoteStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -27,7 +28,7 @@ public class NoteResponse {
     private String title;
 
     @JsonProperty("tags")
-    private List<String> tags;
+    private List<TagResponse> tags;
 
     @JsonProperty("is_pinned")
     private boolean isPinned;
@@ -40,7 +41,7 @@ public class NoteResponse {
     private Long numberOrder;
 
     @JsonProperty("content")
-    private List<NoteContentResponse> noteContentDTOS;
+    private List<NoteContentResponse> noteContent;
 
     @JsonProperty("owner_id")
     private Long ownerId;

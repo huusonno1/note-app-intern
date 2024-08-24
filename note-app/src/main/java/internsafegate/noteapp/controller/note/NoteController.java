@@ -75,6 +75,10 @@ public class NoteController {
                 .build());
     }
 
+//    List Notes by Tag
+//    Search Notes by Title
+//    Filter Notes by Status
+
 //  UPDATE
     @PutMapping("/{noteId}")
     public ResponseEntity<ResponseObject> updateNotes(
@@ -127,6 +131,8 @@ public class NoteController {
                 .message("Update node successfully.")
                 .build());
     }
+
+//    Change Note Order
 
 //  DELETE
     @DeleteMapping("/{noteId}")
