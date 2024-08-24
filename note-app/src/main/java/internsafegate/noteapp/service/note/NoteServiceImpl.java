@@ -8,10 +8,7 @@ import internsafegate.noteapp.exception.DataNotFoundException;
 import internsafegate.noteapp.mapper.NoteContentMapper;
 import internsafegate.noteapp.mapper.NoteMapper;
 import internsafegate.noteapp.mapper.TagMapper;
-import internsafegate.noteapp.model.NoteContent;
-import internsafegate.noteapp.model.Notes;
-import internsafegate.noteapp.model.Tags;
-import internsafegate.noteapp.model.Users;
+import internsafegate.noteapp.model.*;
 import internsafegate.noteapp.repository.NoteContentRepository;
 import internsafegate.noteapp.repository.NoteRepository;
 import internsafegate.noteapp.repository.TagRepository;
@@ -210,6 +207,36 @@ public class NoteServiceImpl implements NoteService{
     @Override
     public NoteListResponse searchNotes(Long userId, String keyword, Pageable pageable) throws Exception {
         Page<Notes> notesPage = noteRepo.searchNotes(userId, keyword, pageable);
+
+        if (notesPage == null) {
+            throw new DataNotFoundException("Failed to fetch notes: notesPage is null");
+        }
+        System.out.println(notesPage);
+
+        // Chuyển đổi từ Page<Notes> sang NoteListResponse
+        List<NoteResponse> noteResponses = notesPage.getContent().stream()
+                .map(note -> {
+                    NoteResponse noteResponse = new NoteResponse();
+                    noteResponse.setId(note.getId());
+                    noteResponse.setTitle(note.getTitle());
+                    noteResponse.setStatusNotes(note.getStatusNotes());
+                    noteResponse.setPinned(note.isPinned());
+                    noteResponse.setNumberOrder(note.getNumberOrder());
+                    noteResponse.setOwnerId(note.getUser().getId());
+                    noteResponse.setTags(TagMapper.toListTagResponse(note.getTags()));
+                    return noteResponse;
+                })
+                .collect(Collectors.toList());
+
+        return NoteListResponse.builder()
+                .notes(noteResponses)
+                .totalPages(notesPage.getTotalPages())
+                .build();
+    }
+
+    @Override
+    public NoteListResponse getListNotesByStatus(Long userId, NoteStatus status, Pageable pageable) throws Exception {
+        Page<Notes> notesPage = noteRepo.getAllNotesByStatus(userId, status, pageable);
 
         if (notesPage == null) {
             throw new DataNotFoundException("Failed to fetch notes: notesPage is null");

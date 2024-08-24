@@ -4,6 +4,7 @@ import internsafegate.noteapp.dto.request.note.NoteDTO;
 import internsafegate.noteapp.dto.response.ResponseObject;
 import internsafegate.noteapp.dto.response.note.NoteListResponse;
 import internsafegate.noteapp.dto.response.note.NoteResponse;
+import internsafegate.noteapp.model.NoteStatus;
 import internsafegate.noteapp.model.Notes;
 import internsafegate.noteapp.model.Users;
 import internsafegate.noteapp.security.SecurityUtils;
@@ -95,9 +96,29 @@ public class NoteController {
                 .message("Get list notes successfully.")
                 .build());
     }
-//    Search Notes by Title
 
 //    Filter Notes by Status
+@GetMapping("/status")
+    public ResponseEntity<ResponseObject> getListNotesByStatus(
+            @RequestParam String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) throws Exception {
+
+        PageRequest pageRequest = PageRequest.of(page, limit);
+
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        NoteStatus noteStatus = NoteStatus.valueOf(status);
+
+        NoteListResponse noteListResponse = noteService.getListNotesByStatus(loggedInUser.getId(), noteStatus, pageRequest);
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.FOUND)
+                .data(noteListResponse)
+                .message("Get list notes successfully.")
+                .build());
+    }
 
 //  UPDATE
     @PutMapping("/{noteId}")

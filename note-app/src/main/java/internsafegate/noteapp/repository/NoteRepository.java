@@ -1,5 +1,6 @@
 package internsafegate.noteapp.repository;
 
+import internsafegate.noteapp.model.NoteStatus;
 import internsafegate.noteapp.model.Notes;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,4 +20,6 @@ public interface NoteRepository extends JpaRepository<Notes, Long> {
             "n.title LIKE %:keyword% " +
             "OR t.nameTag LIKE %:keyword%) ")
     Page<Notes> searchNotes(Long userId, @Param("keyword") String keyword, Pageable pageable);
+    @Query("SELECT n FROM Notes n WHERE n.user.id = ?1 AND n.statusNotes = ?2 ORDER BY n.isPinned DESC, n.numberOrder ASC ")
+    Page<Notes> getAllNotesByStatus(Long userId, NoteStatus status, Pageable pageable);
 }

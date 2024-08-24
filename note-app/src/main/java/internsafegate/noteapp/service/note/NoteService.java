@@ -3,6 +3,7 @@ package internsafegate.noteapp.service.note;
 import internsafegate.noteapp.dto.request.note.NoteDTO;
 import internsafegate.noteapp.dto.response.note.NoteListResponse;
 import internsafegate.noteapp.dto.response.note.NoteResponse;
+import internsafegate.noteapp.model.NoteStatus;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -24,4 +25,6 @@ public interface NoteService {
     NoteListResponse getListNotesByTag(Long userId, String tag, PageRequest pageRequest) throws Exception;
 
     NoteListResponse searchNotes(Long userId, String keyword, Pageable pageable) throws Exception;
+
+    NoteListResponse getListNotesByStatus(Long userId, NoteStatus status, Pageable pageable) throws Exception;;
 }
