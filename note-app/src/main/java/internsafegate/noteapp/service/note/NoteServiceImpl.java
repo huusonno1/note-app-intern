@@ -49,7 +49,7 @@ public class NoteServiceImpl implements NoteService{
                 .map(contentDTO -> NoteContentMapper.toEntity(contentDTO, users, savedNote))
                 .collect(Collectors.toList());
 
-        noteContentRepo.saveAll(noteContents);
+//        noteContentRepo.saveAll(noteContents);
 
         List<Tags> tagsList = noteDTO.getTags().stream()
                 .map(tagDTO -> {
@@ -65,11 +65,10 @@ public class NoteServiceImpl implements NoteService{
                 .collect(Collectors.toList());
 
         savedNote.setTags(tagsList);
+        savedNote.setNoteContents(noteContents);
         noteRepo.save(savedNote);
 
-        savedNote.setNoteContents(noteContents);
-
-        return noteMapper.toResponseDTO(savedNote);
+        return NoteMapper.toResponseDTO(savedNote);
     }
 
     @Override
@@ -149,7 +148,7 @@ public class NoteServiceImpl implements NoteService{
 
         Notes savedNote = noteRepo.save(notes);
 
-        return noteMapper.toResponseDTO(savedNote);
+        return NoteMapper.toResponseDTO(savedNote);
     }
 
     @Override

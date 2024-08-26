@@ -16,10 +16,6 @@ import java.util.stream.Collectors;
 @Component
 public class NoteMapper {
     public static NoteResponse toResponseDTO(Notes note) {
-        List<NoteContentResponse> noteContentDTOS = note.getNoteContents().stream()
-                .map(NoteMapper:: toNoteContentResponse)
-                .collect(Collectors.toList());
-
 
         return NoteResponse.builder()
                 .id(note.getId())
@@ -33,9 +29,6 @@ public class NoteMapper {
                 .build();
     }
 
-    private static NoteContentResponse toNoteContentResponse(NoteContent noteContent) {
-        return NoteContentMapper.toResponseDTO(noteContent);
-    }
 
     public static Notes toEntity(NoteDTO noteRequestDTO, Users user) {
         return Notes.builder()

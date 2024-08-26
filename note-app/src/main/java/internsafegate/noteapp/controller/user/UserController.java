@@ -28,6 +28,8 @@ public class UserController {
                 .build());
     }
 
+    @GetMapping("")
+
     @PutMapping("/{userId}")
     public ResponseEntity<ResponseObject> updateUserProfile(
             @PathVariable Long userId,

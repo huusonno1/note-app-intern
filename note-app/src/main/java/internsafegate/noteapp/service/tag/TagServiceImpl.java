@@ -14,7 +14,9 @@ import internsafegate.noteapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -119,7 +121,26 @@ public class TagServiceImpl implements TagService{
     }
 
     @Override
-    public TagListResponse getListTagOfUser(Long id) throws Exception {
-        return null;
+    public TagListResponse getListTagOfUser(Long userId) throws Exception {
+        List<Tags> tagsList = tagRepo.findListTagByUserId(userId);
+        if(tagsList == null) {
+            throw new DataNotFoundException("Not found list tag by User id" + userId);
+        }
+
+        List<TagResponse> responseList = tagsList.stream()
+                .map(tags -> {
+                    TagResponse tagResponse = new TagResponse();
+                    tagResponse.setId(tags.getId());
+                    tagResponse.setNameTag(tags.getNameTag());
+                    tagResponse.setActive(tags.isActive());
+
+                    return tagResponse;
+                })
+                .collect(Collectors.toList());
+
+        return TagListResponse.builder()
+                .tags(responseList)
+                .totalPages(1)
+                .build();
     }
 }

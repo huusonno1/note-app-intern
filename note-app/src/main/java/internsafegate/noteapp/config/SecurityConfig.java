@@ -1,6 +1,7 @@
 package internsafegate.noteapp.config;
 
 import internsafegate.noteapp.security.JwtAuthenticationFilter;
+import internsafegate.noteapp.service.auth.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

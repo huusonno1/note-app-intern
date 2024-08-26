@@ -17,5 +17,5 @@ public interface TagService {
 
     void deleteTagByIdOfUser(Long tagId, Long id) throws Exception;
 
-    TagListResponse getListTagOfUser(Long id) throws Exception;
+    TagListResponse getListTagOfUser(Long userId) throws Exception;
 }
