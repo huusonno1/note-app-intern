@@ -40,4 +40,25 @@ public class SearchController {
                 .message("Search notes successfully.")
                 .build());
     }
+
+    @GetMapping("/user")
+    public ResponseEntity<ResponseObject> searchUsers(
+            @RequestParam(defaultValue = "", required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) throws Exception {
+
+        PageRequest pageRequest = PageRequest.of(page, limit);
+
+        Users loggedInUser = securityUtils.getLoggedInUser();
+
+        NoteListResponse noteListResponse = noteService.searchNotes(loggedInUser.getId(), keyword, pageRequest);
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.FOUND)
+                .data(noteListResponse)
+                .message("Search notes successfully.")
+                .build());
+    }
+
 }

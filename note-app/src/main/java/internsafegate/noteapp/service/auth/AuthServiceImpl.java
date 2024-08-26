@@ -3,6 +3,7 @@ package internsafegate.noteapp.service.auth;
 import internsafegate.noteapp.dto.request.auth.AuthDTO;
 import internsafegate.noteapp.dto.request.auth.LoginDTO;
 import internsafegate.noteapp.dto.response.auth.AuthResponse;
+import internsafegate.noteapp.dto.response.auth.GoogleUser;
 import internsafegate.noteapp.exception.DataNotFoundException;
 import internsafegate.noteapp.exception.UsernameAlreadyExistsException;
 import internsafegate.noteapp.model.Role;
@@ -18,6 +19,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Optional;
@@ -108,6 +110,51 @@ public class AuthServiceImpl implements AuthService{
                 .id(userDetail.getId())
                 .build();
     }
+
+    @Override
+    public AuthResponse authenticateGoogleUser(String googleToken) throws Exception {
+        // Xác thực Access Token với Google
+        GoogleUser googleUser = verifyAccessTokenWithGoogle(googleToken);
+
+        // Kiểm tra hoặc lưu người dùng trong DB
+
+        Optional<Users> userOptional = userRepo.findByEmail(googleUser.getEmail());
+        Users user;
+        if (userOptional.isEmpty()) {
+            user = Users.builder()
+                    .email(googleUser.getEmail())
+                    .username(googleUser.getName())
+                    .active(true)
+                    .build();
+
+            // Lưu người dùng vào DB
+            userRepo.save(user);
+        } else {
+            user = userOptional.get();
+        }
+
+        // Tạo JWT và trả về
+        String jwtToken = jwtService.generateToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+        revokeAllUserTokens(user);
+        saveUserToken(user, jwtToken);
+
+        return AuthResponse.builder()
+                .message("Login Successfully")
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .tokenType("BEARER")
+                .username(user.getUsername())
+                .id(user.getId())
+                .build();
+    }
+
+    private GoogleUser verifyAccessTokenWithGoogle(String googleToken) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + googleToken;
+        return restTemplate.getForObject(url, GoogleUser.class);
+    }
+
 
     private void revokeAllUserTokens(Users user) {
         List<Token> validUserTokens = tokenRepo.findAllValidTokenByUser(user.getId());

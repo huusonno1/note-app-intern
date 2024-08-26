@@ -1,6 +1,7 @@
 package internsafegate.noteapp.config;
 
 import internsafegate.noteapp.security.JwtAuthenticationFilter;
+import internsafegate.noteapp.security.JwtService;
 import internsafegate.noteapp.service.auth.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -28,9 +30,11 @@ public class SecurityConfig {
 
     private final AuthenticationProvider authenticationProvider;
 
-//    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     private final LogoutHandler logoutHandler;
+
+    private final JwtService jwtService;
 
 
     @Value("${api.prefix}")

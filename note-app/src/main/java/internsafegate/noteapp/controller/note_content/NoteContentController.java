@@ -60,8 +60,7 @@ public class NoteContentController {
     @PutMapping("{noteContentId}")
     public ResponseEntity<ResponseObject> updateNoteContent(
             @PathVariable Long noteContentId,
-            @RequestPart("NoteContentDTO") NoteContentDTO noteContentDTO,
-            @RequestPart("FileImage") MultipartFile file
+            @RequestBody NoteContentDTO noteContentDTO
     ) throws Exception {
         Users loggedInUser= securityUtils.getLoggedInUser();
 

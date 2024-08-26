@@ -1,6 +1,7 @@
 package internsafegate.noteapp.controller.auth;
 
 import internsafegate.noteapp.dto.request.auth.AuthDTO;
+import internsafegate.noteapp.dto.request.auth.GoogleDTO;
 import internsafegate.noteapp.dto.request.auth.LoginDTO;
 import internsafegate.noteapp.dto.response.ResponseObject;
 import internsafegate.noteapp.dto.response.auth.AuthResponse;
@@ -64,6 +65,28 @@ public class AuthController {
         }
 
         AuthResponse loginResponse = authService.login(loginDTO);
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .data(loginResponse)
+                .message("Login successfully")
+                .build());
+    }
+
+    @PostMapping("google")
+    public ResponseEntity<ResponseObject> googleLogin(
+            @RequestBody GoogleDTO googleDTO
+            ) throws Exception {
+
+        if(googleDTO.getGoogleToken() == null || googleDTO.getGoogleToken().trim().isBlank()) {
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .data(null)
+                    .message("username is required")
+                    .build());
+        }
+
+        AuthResponse loginResponse = authService.authenticateGoogleUser(googleDTO.getGoogleToken());
 
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.OK)

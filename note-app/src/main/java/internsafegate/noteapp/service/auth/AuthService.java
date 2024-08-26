@@ -8,4 +8,6 @@ public interface AuthService {
     AuthResponse register(AuthDTO authDTO) throws Exception;
 
     AuthResponse login(LoginDTO loginDTO) throws Exception;
+
+    AuthResponse authenticateGoogleUser(String googleToken) throws Exception;
 }
