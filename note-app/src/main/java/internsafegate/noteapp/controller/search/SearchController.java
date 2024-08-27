@@ -2,9 +2,11 @@ package internsafegate.noteapp.controller.search;
 
 import internsafegate.noteapp.dto.response.ResponseObject;
 import internsafegate.noteapp.dto.response.note.NoteListResponse;
+import internsafegate.noteapp.dto.response.user.UserListResponse;
 import internsafegate.noteapp.model.Users;
 import internsafegate.noteapp.security.SecurityUtils;
 import internsafegate.noteapp.service.note.NoteService;
+import internsafegate.noteapp.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("${api.prefix}/search")
 public class SearchController {
     private final NoteService noteService;
+    private final UserService userService;
     private final SecurityUtils securityUtils;
 
     @GetMapping("/notes")
@@ -50,14 +53,12 @@ public class SearchController {
 
         PageRequest pageRequest = PageRequest.of(page, limit);
 
-        Users loggedInUser = securityUtils.getLoggedInUser();
-
-        NoteListResponse noteListResponse = noteService.searchNotes(loggedInUser.getId(), keyword, pageRequest);
+        UserListResponse userListResponse = userService.searchUsers(keyword, pageRequest);
 
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.FOUND)
-                .data(noteListResponse)
-                .message("Search notes successfully.")
+                .data(userListResponse)
+                .message("Search users successfully.")
                 .build());
     }
 

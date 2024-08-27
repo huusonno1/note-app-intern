@@ -1,15 +1,24 @@
 package internsafegate.noteapp.service.user;
 
 import internsafegate.noteapp.dto.request.user.UserDTO;
+import internsafegate.noteapp.dto.response.note.NoteListResponse;
+import internsafegate.noteapp.dto.response.note.NoteResponse;
+import internsafegate.noteapp.dto.response.user.UserListResponse;
 import internsafegate.noteapp.dto.response.user.UserResponse;
 import internsafegate.noteapp.exception.DataNotFoundException;
+import internsafegate.noteapp.mapper.TagMapper;
+import internsafegate.noteapp.model.Notes;
 import internsafegate.noteapp.model.Users;
 import internsafegate.noteapp.repository.UserRepository;
 import internsafegate.noteapp.security.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -84,5 +93,30 @@ public class UserServiceImpl implements UserService{
                 .isActive(updatedUser.isActive())
                 .build();
         return updatedUserResponse;
+    }
+
+    @Override
+    public UserListResponse searchUsers(String keyword, Pageable pageable) throws Exception{
+        Page<Users> usersPage = userRepo.searchUsers(keyword, pageable);
+
+        if (usersPage == null) {
+            throw new DataNotFoundException("Failed to fetch notes: notesPage is null");
+        }
+
+        // Chuyển đổi từ Page<Notes> sang NoteListResponse
+        List<UserResponse> userResponses = usersPage.getContent().stream()
+                .map(user -> {
+                    UserResponse userResponse = new UserResponse();
+                    userResponse.setId(user.getId());
+                    userResponse.setEmail(user.getEmail());
+                    userResponse.setUsername(user.getUsername());
+
+                    return userResponse;
+                })
+                .collect(Collectors.toList());
+
+        return UserListResponse.builder()
+                .users(userResponses)
+                .build();
     }
 }
