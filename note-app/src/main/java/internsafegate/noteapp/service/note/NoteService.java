@@ -7,6 +7,8 @@ import internsafegate.noteapp.model.NoteStatus;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface NoteService {
     NoteResponse createNote(NoteDTO noteDTO) throws Exception;
 
@@ -26,9 +28,10 @@ public interface NoteService {
 
     NoteListResponse searchNotes(Long userId, String keyword, Pageable pageable) throws Exception;
 
-    NoteListResponse getListNotesByStatus(Long userId, NoteStatus status, Pageable pageable) throws Exception;
+    NoteListResponse getListNotesByStatus(Long userId, List<NoteStatus> status, Pageable pageable) throws Exception;
 
     NoteListResponse getListNotesByStatusPin(Long userId, Boolean statusPin, Pageable pageable) throws Exception;
 
     NoteListResponse getListNotesCustom(Long userId, Boolean statusPin, NoteStatus noteStatus, Long tagId, Pageable pageable) throws Exception;
+
 }

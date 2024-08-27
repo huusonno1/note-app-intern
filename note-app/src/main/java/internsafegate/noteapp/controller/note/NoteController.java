@@ -15,6 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/notes")
@@ -152,6 +155,7 @@ public class NoteController {
                 .build());
     }
 
+
 //    List Notes by Tag
     @GetMapping("/list-notes-by-tag")
     public ResponseEntity<ResponseObject> getListNotesByTag(
@@ -174,9 +178,9 @@ public class NoteController {
     }
 
 //    Filter Notes by Status
-@GetMapping("/status")
+    @GetMapping("/status")
     public ResponseEntity<ResponseObject> getListNotesByStatus(
-            @RequestParam String status,
+            @RequestParam List<String> status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit
     ) throws Exception {
@@ -185,9 +189,12 @@ public class NoteController {
 
         Users loggedInUser= securityUtils.getLoggedInUser();
 
-        NoteStatus noteStatus = NoteStatus.valueOf(status);
+        List<NoteStatus> noteStatuses = status.stream()
+                .map(String::toUpperCase)  // Chuyển tất cả các chuỗi thành chữ hoa để khớp với giá trị enum
+                .map(NoteStatus::valueOf)  // Chuyển chuỗi thành giá trị `NoteStatus`
+                .collect(Collectors.toList());
 
-        NoteListResponse noteListResponse = noteService.getListNotesByStatus(loggedInUser.getId(), noteStatus, pageRequest);
+        NoteListResponse noteListResponse = noteService.getListNotesByStatus(loggedInUser.getId(), noteStatuses, pageRequest);
 
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.FOUND)

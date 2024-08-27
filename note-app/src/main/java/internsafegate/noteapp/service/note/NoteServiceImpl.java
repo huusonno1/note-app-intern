@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -234,8 +235,11 @@ public class NoteServiceImpl implements NoteService{
     }
 
     @Override
-    public NoteListResponse getListNotesByStatus(Long userId, NoteStatus status, Pageable pageable) throws Exception {
-        Page<Notes> notesPage = noteRepo.getAllNotesByStatus(userId, status, pageable);
+    public NoteListResponse getListNotesByStatus(Long userId, List<NoteStatus> statuses, Pageable pageable) throws Exception {
+//        List<NoteStatus> statuses = new ArrayList<>();
+//        statuses.add(NoteStatus.ARCHIVED);
+//        statuses.add(NoteStatus.COMPLETED);
+        Page<Notes> notesPage = noteRepo.getAllNotesByStatus(userId, statuses, pageable);
 
         if (notesPage == null) {
             throw new DataNotFoundException("Failed to fetch notes: notesPage is null");
@@ -321,6 +325,8 @@ public class NoteServiceImpl implements NoteService{
                 .totalPages(notesPage.getTotalPages())
                 .build();
     }
+
+
 
 
 }

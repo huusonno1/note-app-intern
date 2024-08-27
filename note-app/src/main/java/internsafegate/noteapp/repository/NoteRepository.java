@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface NoteRepository extends JpaRepository<Notes, Long> {
     @Query("SELECT n FROM Notes n WHERE n.user.id = ?1 ORDER BY n.isPinned DESC, n.numberOrder ASC ")
     Page<Notes> getAllNotes(Long userId, PageRequest pageRequest);
@@ -20,8 +22,8 @@ public interface NoteRepository extends JpaRepository<Notes, Long> {
             "n.title LIKE %:keyword% " +
             "OR t.nameTag LIKE %:keyword%) ")
     Page<Notes> searchNotes(Long userId, @Param("keyword") String keyword, Pageable pageable);
-    @Query("SELECT n FROM Notes n WHERE n.user.id = ?1 AND n.statusNotes = ?2 ORDER BY n.isPinned DESC, n.numberOrder ASC ")
-    Page<Notes> getAllNotesByStatus(Long userId, NoteStatus status, Pageable pageable);
+    @Query("SELECT n FROM Notes n WHERE n.user.id = :userId AND (:statuses IS NULL OR n.statusNotes IN :statuses) ORDER BY n.isPinned DESC, n.numberOrder ASC ")
+    Page<Notes> getAllNotesByStatus(Long userId, List<NoteStatus> statuses, Pageable pageable);
     @Query("SELECT n FROM Notes n WHERE n.user.id = ?1 AND n.isPinned = ?2 ORDER BY n.createdAt DESC")
     Page<Notes> getAllNotesByStatusPin(Long userId, Boolean statusPin, Pageable pageable);
 
