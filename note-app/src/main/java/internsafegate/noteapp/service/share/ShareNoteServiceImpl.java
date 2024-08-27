@@ -10,6 +10,7 @@ import internsafegate.noteapp.repository.NoteRepository;
 import internsafegate.noteapp.repository.NotificationRepository;
 import internsafegate.noteapp.repository.ShareNoteRepository;
 import internsafegate.noteapp.repository.UserRepository;
+import internsafegate.noteapp.service.fcm.FCMService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -109,12 +110,23 @@ public class ShareNoteServiceImpl implements ShareNoteService{
     private void createNotification(Users receiver, ShareNotes savedShareNote) {
         Notification notification = Notification.builder()
                 .owner(receiver)
-                .message("Share Note")
+                .message("Note shared by" + receiver.getUsername())
                 .shareNote(savedShareNote)
                 .isRead(false)
                 .notificationType(NotificationType.SHARED)
                 .build();
 
         notificationRepo.save(notification);
+        // token x = receiver.getDeviceToken() token is frontend gui
+//        sendPushNotification("x", "New Note Shared", notification.getMessage());
+    }
+
+    private void sendPushNotification(String deviceToken, String title, String message) {
+        if (deviceToken == null || deviceToken.isEmpty()) {
+            return;
+        }
+
+        FCMService fcmService = new FCMService();
+        fcmService.sendNotification(deviceToken, title, message);
     }
 }

@@ -76,6 +76,82 @@ public class NoteController {
                 .build());
     }
 
+    @GetMapping("/list-notes-pin")
+    public ResponseEntity<ResponseObject> getListNotesPin(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) throws Exception {
+
+        PageRequest pageRequest = PageRequest.of(page, limit);
+
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        Boolean statusPin = true;
+
+        NoteListResponse noteListResponse = noteService
+                .getListNotesByStatusPin(loggedInUser.getId(), statusPin, pageRequest);
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.FOUND)
+                .data(noteListResponse)
+                .message("Get list notes successfully.")
+                .build());
+    }
+
+    @GetMapping("/list-notes-unpin")
+    public ResponseEntity<ResponseObject> getListNotesUnpin(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) throws Exception {
+
+        PageRequest pageRequest = PageRequest.of(page, limit);
+
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        Boolean statusPin = false;
+
+        NoteListResponse noteListResponse = noteService
+                .getListNotesByStatusPin(loggedInUser.getId(), statusPin, pageRequest);
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.FOUND)
+                .data(noteListResponse)
+                .message("Get list notes successfully.")
+                .build());
+    }
+
+    @GetMapping("/list-notes-custom")
+    public ResponseEntity<ResponseObject> getListNotesCustom(
+            @RequestParam(required = false) Boolean statusPin,
+            @RequestParam(defaultValue = "", required = false) String statusNote,
+            @RequestParam(required = false) Long tagId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) throws Exception {
+
+        PageRequest pageRequest = PageRequest.of(page, limit);
+
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        NoteStatus noteStatus = null;
+        if(statusNote != null  && !statusNote.isEmpty()){
+            try {
+                noteStatus = NoteStatus.valueOf(statusNote.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                noteStatus = null;
+            }
+        }
+
+        NoteListResponse noteListResponse = noteService
+                .getListNotesCustom(loggedInUser.getId(), statusPin, noteStatus, tagId, pageRequest);
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.FOUND)
+                .data(noteListResponse)
+                .message("Get list notes successfully.")
+                .build());
+    }
+
 //    List Notes by Tag
     @GetMapping("/list-notes-by-tag")
     public ResponseEntity<ResponseObject> getListNotesByTag(

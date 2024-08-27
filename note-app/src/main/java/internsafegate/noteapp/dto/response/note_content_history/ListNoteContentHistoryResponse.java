@@ -14,4 +14,5 @@ import java.util.List;
 public class ListNoteContentHistoryResponse {
     private List<NoteContentHistoryResponse> contentHistoryResponses;
     private int totalPages;
+    private long totalItems;
 }

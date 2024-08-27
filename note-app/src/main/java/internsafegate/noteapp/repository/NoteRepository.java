@@ -22,4 +22,17 @@ public interface NoteRepository extends JpaRepository<Notes, Long> {
     Page<Notes> searchNotes(Long userId, @Param("keyword") String keyword, Pageable pageable);
     @Query("SELECT n FROM Notes n WHERE n.user.id = ?1 AND n.statusNotes = ?2 ORDER BY n.isPinned DESC, n.numberOrder ASC ")
     Page<Notes> getAllNotesByStatus(Long userId, NoteStatus status, Pageable pageable);
+    @Query("SELECT n FROM Notes n WHERE n.user.id = ?1 AND n.isPinned = ?2 ORDER BY n.createdAt DESC")
+    Page<Notes> getAllNotesByStatusPin(Long userId, Boolean statusPin, Pageable pageable);
+
+    @Query("SELECT n FROM Notes n JOIN n.tags t WHERE n.user.id = :userId " +
+            "AND (:statusPin IS NULL OR n.isPinned = :statusPin) " +
+            "AND (:noteStatus IS NULL OR n.statusNotes = :noteStatus) " +
+            "AND (:tagId IS NULL OR t.id = :tagId)" +
+            "ORDER BY n.createdAt DESC ")
+    Page<Notes> getAllNotesCustom(Long userId,
+                                  Boolean statusPin,
+                                  NoteStatus noteStatus,
+                                  Long tagId,
+                                  Pageable pageable);
 }

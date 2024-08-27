@@ -45,6 +45,7 @@ public class NoteContentHistoryServiceImpl implements NoteContentHistoryService{
         return ListNoteContentHistoryResponse.builder()
                 .contentHistoryResponses(responseList)
                 .totalPages(historyPage.getTotalPages())
+                .totalItems(historyPage.getTotalElements())
                 .build();
     }
 }
