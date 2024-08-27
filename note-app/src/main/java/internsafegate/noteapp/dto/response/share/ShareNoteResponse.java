@@ -25,4 +25,7 @@ public class ShareNoteResponse {
 
     @JsonProperty("receiver_id")
     private Long receiverId;
+
+    @JsonProperty("note_title")
+    private String noteTitle;
 }

@@ -13,6 +13,7 @@ import internsafegate.noteapp.repository.UserRepository;
 import internsafegate.noteapp.service.fcm.FCMService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -93,6 +94,23 @@ public class ShareNoteServiceImpl implements ShareNoteService{
     @Override
     public ListShareNoteResponse getShareNotes(Long senderId, Pageable pageable) throws Exception {
         Page<ShareNotes> notesPage = shareNoteRepo.getAllShareNoteOfUser(senderId, pageable);
+        if(notesPage == null) {
+            throw new DataNotFoundException("not found list share note by user");
+        }
+        List<ShareNoteResponse> responseList = notesPage.stream()
+                .map(ShareNoteMapper::toResponseDTO)
+                .collect(Collectors.toList());
+
+        return ListShareNoteResponse.builder()
+                .shareNoteResponses(responseList)
+                .totalPages(notesPage.getTotalPages())
+                .build();
+    }
+
+    @Override
+    public ListShareNoteResponse getShareNotesOfReceiver(Long receiverId, Pageable pageable) throws Exception {
+        Page<ShareNotes> notesPage = shareNoteRepo.getAllShareNoteOfReceiver(receiverId, pageable);
+
         if(notesPage == null) {
             throw new DataNotFoundException("not found list share note by user");
         }

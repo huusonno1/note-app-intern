@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface ShareNoteRepository extends JpaRepository<ShareNotes, Long> {
     @Query("SELECT sn FROM ShareNotes sn WHERE sn.sender.id = ?1 ORDER BY sn.updatedAt DESC ")
     Page<ShareNotes> getAllShareNoteOfUser(Long senderId, Pageable pageable);
+    @Query("SELECT sn FROM ShareNotes sn WHERE sn.receiver.id = ?1 ORDER BY sn.updatedAt DESC ")
+    Page<ShareNotes> getAllShareNoteOfReceiver(Long receiverId, Pageable pageable);
 }

@@ -16,6 +16,7 @@ public class ShareNoteMapper {
                 .contributionAccepted(shareNotes.isContributionAccepted())
                 .senderId(shareNotes.getSender().getId())
                 .receiverId(shareNotes.getReceiver().getId())
+                .noteTitle(shareNotes.getNotes().getTitle())
                 .build();
     }
 

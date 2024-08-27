@@ -50,8 +50,8 @@ public class ShareNoteController {
                 .build());
     }
 //    get share notes
-    @GetMapping("")
-    public ResponseEntity<ResponseObject> getShareNotes(
+    @GetMapping("/sender")
+    public ResponseEntity<ResponseObject> getShareNotesOfSender(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit
     ) throws Exception{
@@ -60,6 +60,23 @@ public class ShareNoteController {
         Users loggedInUser= securityUtils.getLoggedInUser();
 
         ListShareNoteResponse shareNoteResponse = shareNoteService.getShareNotes(loggedInUser.getId(), pageRequest);
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .data(shareNoteResponse)
+                .message("Get note shared successfully")
+                .build());
+    }
+    @GetMapping("/receiver")
+    public ResponseEntity<ResponseObject> getShareNotesOfReceiver(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) throws Exception{
+        PageRequest pageRequest = PageRequest.of(page, limit);
+
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        ListShareNoteResponse shareNoteResponse = shareNoteService.getShareNotesOfReceiver(loggedInUser.getId(), pageRequest);
 
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.OK)
