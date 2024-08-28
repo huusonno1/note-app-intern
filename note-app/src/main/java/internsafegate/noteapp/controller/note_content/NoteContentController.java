@@ -59,13 +59,14 @@ public class NoteContentController {
 
     @PutMapping("{noteContentId}")
     public ResponseEntity<ResponseObject> updateNoteContent(
+            @PathVariable Long noteId,
             @PathVariable Long noteContentId,
             @RequestBody NoteContentDTO noteContentDTO
     ) throws Exception {
         Users loggedInUser= securityUtils.getLoggedInUser();
 
         NoteContentResponse noteContentResponse = noteContentService
-                .updateNoteContent(noteContentId, noteContentDTO, loggedInUser.getId());
+                .updateNoteContent(noteId,noteContentId, noteContentDTO, loggedInUser.getId());
 
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.OK)

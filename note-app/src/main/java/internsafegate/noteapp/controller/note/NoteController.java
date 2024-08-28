@@ -50,8 +50,9 @@ public class NoteController {
     public ResponseEntity<ResponseObject> getNoteById(
             @PathVariable Long noteId
     ) throws Exception {
+        Users loggedInUser= securityUtils.getLoggedInUser();
 
-        NoteResponse noteResponse = noteService.getNoteByIds(noteId);
+        NoteResponse noteResponse = noteService.getNoteByIds(noteId, loggedInUser.getId());
 
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.FOUND)

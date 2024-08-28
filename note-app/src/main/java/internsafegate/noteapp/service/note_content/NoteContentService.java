@@ -11,7 +11,7 @@ public interface NoteContentService {
 
     ListNoteContentResponse getListNoteContent(Long noteId, PageRequest pageRequest) throws Exception;
 
-    NoteContentResponse updateNoteContent(Long noteContentId, NoteContentDTO noteContentDTO, Long ownerId) throws Exception;
+    NoteContentResponse updateNoteContent(Long noteId, Long noteContentId, NoteContentDTO noteContentDTO, Long ownerId) throws Exception;
 
     void deleteNoteContent(Long noteContentId, Long ownerId) throws Exception;
 }

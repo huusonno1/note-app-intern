@@ -7,9 +7,11 @@ import internsafegate.noteapp.exception.DataNotFoundException;
 import internsafegate.noteapp.mapper.NoteContentMapper;
 import internsafegate.noteapp.model.NoteContent;
 import internsafegate.noteapp.model.Notes;
+import internsafegate.noteapp.model.ShareNotes;
 import internsafegate.noteapp.model.Users;
 import internsafegate.noteapp.repository.NoteContentRepository;
 import internsafegate.noteapp.repository.NoteRepository;
+import internsafegate.noteapp.repository.ShareNoteRepository;
 import internsafegate.noteapp.repository.UserRepository;
 import internsafegate.noteapp.service.awss3.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +31,7 @@ public class NoteContentServiceImpl implements NoteContentService{
     private final NoteRepository noteRepo;
     private final UserRepository userRepo;
     private final NoteContentRepository noteContentRepo;
-
+    private final ShareNoteRepository shareNoteRepo;
 
 
     @Override
@@ -91,15 +93,29 @@ public class NoteContentServiceImpl implements NoteContentService{
 
     @Override
     public NoteContentResponse updateNoteContent(
+            Long noteId,
             Long noteContentId,
             NoteContentDTO noteContentDTO,
             Long ownerId
     ) throws Exception {
+        Notes notes = noteRepo.findById(noteId)
+                .orElseThrow(() -> new DataNotFoundException("Not Found note by note id"));
         NoteContent noteContent = noteContentRepo.findById(noteContentId)
                 .orElseThrow(() -> new DataNotFoundException("Not found note-content by note-content id"));
-
         Users owner = userRepo.findById(ownerId)
                 .orElseThrow(() -> new DataNotFoundException("Not found user by owner id"));
+
+        if(notes.getUser().getId() != ownerId){
+            // check xem user co duoc chia se note_id khong
+            // va user phai chap nhan chia se moi duoc tao moi
+            ShareNotes shareNotes = shareNoteRepo.findByNoteId(noteId)
+                    .orElseThrow(() -> new DataNotFoundException("noteId dont share for user"));
+            if(shareNotes.getNotes().getId() != ownerId || !shareNotes.isContributionAccepted()){
+                //Neu khong duoc nua thi bao Exception
+                throw new DataNotFoundException("User dont update note-content");
+            }
+        }
+
         if(noteContent.getUser().getId() != ownerId
         ){
             noteContent.setUser(owner);

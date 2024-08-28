@@ -12,7 +12,7 @@ import java.util.List;
 public interface NoteService {
     NoteResponse createNote(NoteDTO noteDTO) throws Exception;
 
-    NoteResponse getNoteByIds(Long noteId) throws Exception;
+    NoteResponse getNoteByIds(Long noteId, Long ownerId) throws Exception;
 
     NoteResponse updateNote(Long noteId, NoteDTO noteDTO) throws Exception;
 
