@@ -225,6 +225,37 @@ public class NoteController {
                 .message("Update node successfully.")
                 .build());
     }
+
+    @PutMapping("/{noteId}/archived")
+    public ResponseEntity<ResponseObject> archivedNotes(
+            @PathVariable Long noteId
+    ) throws Exception {
+
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        noteService.archivedNote( noteId, loggedInUser.getId());
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .data(null)
+                .message("archived node successfully.")
+                .build());
+    }
+    @PutMapping("/{noteId}/completed")
+    public ResponseEntity<ResponseObject> completedNotes(
+            @PathVariable Long noteId
+    ) throws Exception {
+
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        noteService.completedNote( noteId, loggedInUser.getId());
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .data(null)
+                .message("completed node successfully.")
+                .build());
+    }
     @PutMapping("/{noteId}/pin")
     public ResponseEntity<ResponseObject> pinNotes(
             @PathVariable Long noteId

@@ -376,4 +376,20 @@ public class NoteServiceImpl implements NoteService{
         return null;
     }
 
+    @Override
+    public void archivedNote(Long noteId, Long userId) throws Exception {
+        Notes notes = noteRepo.findById(noteId)
+                .orElseThrow(() -> new DataNotFoundException("Note not found"));
+        notes.setStatusNotes(NoteStatus.ARCHIVED);
+        noteRepo.save(notes);
+    }
+
+    @Override
+    public void completedNote(Long noteId, Long userId) throws Exception {
+        Notes notes = noteRepo.findById(noteId)
+                .orElseThrow(() -> new DataNotFoundException("Note not found"));
+        notes.setStatusNotes(NoteStatus.COMPLETED);
+        noteRepo.save(notes);
+    }
+
 }
