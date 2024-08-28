@@ -6,6 +6,7 @@ import internsafegate.noteapp.dto.response.note.NoteResponse;
 import internsafegate.noteapp.dto.response.share.ShareNoteResponse;
 import internsafegate.noteapp.model.Notes;
 import internsafegate.noteapp.model.ShareNotes;
+import internsafegate.noteapp.model.StatusShare;
 import internsafegate.noteapp.model.Users;
 
 public class ShareNoteMapper {
@@ -16,16 +17,17 @@ public class ShareNoteMapper {
                 .contributionAccepted(shareNotes.isContributionAccepted())
                 .senderId(shareNotes.getSender().getId())
                 .receiverId(shareNotes.getReceiver().getId())
+                .statusShare(shareNotes.getStatusShare().name())
                 .noteTitle(shareNotes.getNotes().getTitle())
                 .build();
     }
 
-    public static ShareNotes toEntity(Notes notes, Users sender, Users receiver, Boolean status) {
+    public static ShareNotes toEntity(Notes notes, Users sender, Users receiver, StatusShare status) {
         return ShareNotes.builder()
                 .notes(notes)
                 .sender(sender)
                 .receiver(receiver)
-                .contributionAccepted(status)
+                .statusShare(status)
                 .build();
     }
 }

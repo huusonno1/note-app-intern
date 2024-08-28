@@ -1,6 +1,9 @@
 package internsafegate.noteapp.dto.response.share;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import internsafegate.noteapp.model.StatusShare;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,4 +31,7 @@ public class ShareNoteResponse {
 
     @JsonProperty("note_title")
     private String noteTitle;
+
+    @JsonProperty("status_share")
+    private String statusShare;
 }

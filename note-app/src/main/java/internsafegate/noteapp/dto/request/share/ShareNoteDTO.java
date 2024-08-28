@@ -2,6 +2,10 @@ package internsafegate.noteapp.dto.request.share;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import internsafegate.noteapp.model.ContentType;
+import internsafegate.noteapp.model.StatusShare;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.*;
 
 @Data
@@ -19,4 +23,9 @@ public class ShareNoteDTO {
 
     @JsonProperty("receiver")
     private String receiver;
+
+    @JsonProperty("status_share")
+    @Enumerated(EnumType.STRING)
+    private StatusShare statusShare;
+
 }

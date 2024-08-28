@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,7 @@ public class ShareNoteServiceImpl implements ShareNoteService{
         Users receiver = userRepo.findByEmail(shareNoteDTO.getReceiver())
                 .orElseThrow(() -> new DataNotFoundException("Not found receiver"));
 
-        ShareNotes shareNotes = ShareNoteMapper.toEntity(notes, sender, receiver, false);
+        ShareNotes shareNotes = ShareNoteMapper.toEntity(notes, sender, receiver, StatusShare.WAITING);
 
         ShareNotes savedShareNote = shareNoteRepo.save(shareNotes);
 
@@ -70,9 +71,9 @@ public class ShareNoteServiceImpl implements ShareNoteService{
         if(shareNotes.getReceiver().getId() != receiverId){
             throw new DataNotFoundException("User dont have share note id" + shareId);
         }
-        boolean contribution = shareNoteDTO.isContributionAccepted();
-        if(shareNotes.isContributionAccepted() != contribution){
-            shareNotes.setContributionAccepted(contribution);
+
+        if(shareNotes.getStatusShare().name() != shareNoteDTO.getStatusShare().name()){
+            shareNotes.setStatusShare(shareNoteDTO.getStatusShare());
         }
         ShareNotes saved = shareNoteRepo.save(shareNotes);
         return ShareNoteMapper.toResponseDTO(saved);
@@ -93,6 +94,7 @@ public class ShareNoteServiceImpl implements ShareNoteService{
 
     @Override
     public ListShareNoteResponse getShareNotes(Long senderId, Pageable pageable) throws Exception {
+
         Page<ShareNotes> notesPage = shareNoteRepo.getAllShareNoteOfUser(senderId, pageable);
         if(notesPage == null) {
             throw new DataNotFoundException("not found list share note by user");
@@ -109,7 +111,10 @@ public class ShareNoteServiceImpl implements ShareNoteService{
 
     @Override
     public ListShareNoteResponse getShareNotesOfReceiver(Long receiverId, Pageable pageable) throws Exception {
-        Page<ShareNotes> notesPage = shareNoteRepo.getAllShareNoteOfReceiver(receiverId, pageable);
+        List<StatusShare> statusShare = new ArrayList<>();
+        statusShare.add(StatusShare.WAITING);
+        statusShare.add(StatusShare.ACCEPT);
+        Page<ShareNotes> notesPage = shareNoteRepo.getAllShareNoteOfReceiver(receiverId, statusShare, pageable);
 
         if(notesPage == null) {
             throw new DataNotFoundException("not found list share note by user");

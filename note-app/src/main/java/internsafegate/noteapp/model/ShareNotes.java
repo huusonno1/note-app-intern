@@ -18,6 +18,10 @@ public class ShareNotes extends BaseEntity{
     @Column(name = "is_contribution_accepted")
     private boolean contributionAccepted ;
 
+    @Column(name = "status_share")
+    @Enumerated(EnumType.STRING)
+    private StatusShare statusShare;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "note_id")
     private Notes notes;

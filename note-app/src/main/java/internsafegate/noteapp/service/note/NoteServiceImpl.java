@@ -75,16 +75,6 @@ public class NoteServiceImpl implements NoteService{
 
         Notes notes = noteRepo.findById(noteId)
                 .orElseThrow(() -> new DataNotFoundException(String.format("Note %d is not found", noteId)));
-        if(notes.getUser().getId() != ownerId){
-            // check xem user co duoc chia se note_id khong
-            // va user phai chap nhan chia se moi duoc tao moi
-            ShareNotes shareNotes = shareNoteRepo.findByNoteId(noteId)
-                    .orElseThrow(() -> new DataNotFoundException("noteId dont share for user"));
-            if(shareNotes.getNotes().getId() != ownerId || !shareNotes.isContributionAccepted()){
-                //Neu khong duoc nua thi bao Exception
-                throw new DataNotFoundException("User dont update note-content");
-            }
-        }
 
         return noteMapper.toResponseDTO(notes);
     }
@@ -102,7 +92,8 @@ public class NoteServiceImpl implements NoteService{
             // va user phai chap nhan chia se moi duoc tao moi
             ShareNotes shareNotes = shareNoteRepo.findByNoteId(noteId)
                     .orElseThrow(() -> new DataNotFoundException("noteId dont share for user"));
-            if(shareNotes.getNotes().getId() != noteDTO.getUserId() || !shareNotes.isContributionAccepted()){
+            if(shareNotes.getReceiver().getId() != noteDTO.getUserId()
+                    || shareNotes.getStatusShare() != StatusShare.ACCEPT){
                 //Neu khong duoc nua thi bao Exception
                 throw new DataNotFoundException("User dont update note");
             }

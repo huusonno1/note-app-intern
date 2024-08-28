@@ -5,10 +5,7 @@ import internsafegate.noteapp.dto.response.note_content.ListNoteContentResponse;
 import internsafegate.noteapp.dto.response.note_content.NoteContentResponse;
 import internsafegate.noteapp.exception.DataNotFoundException;
 import internsafegate.noteapp.mapper.NoteContentMapper;
-import internsafegate.noteapp.model.NoteContent;
-import internsafegate.noteapp.model.Notes;
-import internsafegate.noteapp.model.ShareNotes;
-import internsafegate.noteapp.model.Users;
+import internsafegate.noteapp.model.*;
 import internsafegate.noteapp.repository.NoteContentRepository;
 import internsafegate.noteapp.repository.NoteRepository;
 import internsafegate.noteapp.repository.ShareNoteRepository;
@@ -110,7 +107,8 @@ public class NoteContentServiceImpl implements NoteContentService{
             // va user phai chap nhan chia se moi duoc tao moi
             ShareNotes shareNotes = shareNoteRepo.findByNoteId(noteId)
                     .orElseThrow(() -> new DataNotFoundException("noteId dont share for user"));
-            if(shareNotes.getNotes().getId() != ownerId || !shareNotes.isContributionAccepted()){
+            if(shareNotes.getReceiver().getId() != ownerId
+                    || shareNotes.getStatusShare() == StatusShare.ACCEPT){
                 //Neu khong duoc nua thi bao Exception
                 throw new DataNotFoundException("User dont update note-content");
             }
