@@ -34,4 +34,5 @@ public interface NoteService {
 
     NoteListResponse getListNotesCustom(Long userId, Boolean statusPin, NoteStatus noteStatus, Long tagId, Pageable pageable) throws Exception;
 
+    NoteResponse updateNoteOrder(Long noteId, Long newOrder, Long userId) throws Exception;
 }

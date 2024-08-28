@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -38,10 +39,25 @@ public interface NoteRepository extends JpaRepository<Notes, Long> {
             "AND (:statusPin IS NULL OR n.isPinned = :statusPin) " +
             "AND (:noteStatus IS NULL OR n.statusNotes = :noteStatus) " +
             "AND (:tagId IS NULL OR t.id = :tagId)" +
-            "ORDER BY n.createdAt DESC ")
+            "ORDER BY n.numberOrder DESC ")
     Page<Notes> getAllNotesCustom(Long userId,
                                   Boolean statusPin,
                                   NoteStatus noteStatus,
                                   Long tagId,
                                   Pageable pageable);
+
+    @Query("SELECT COALESCE(MAX(n.numberOrder), 0) FROM Notes n WHERE n.user.id = :userId")
+    Long findMaxNumberOrder(Long userId);
+    @Modifying
+    @Query("UPDATE Notes n SET n.numberOrder = n.numberOrder - 1 WHERE " +
+            "n.numberOrder > :oldOrder AND " +
+            "n.numberOrder <= :newOrder AND " +
+            "n.user.id = :userId")
+    void updateOrderDecrement(Long oldOrder, Long newOrder, Long userId);
+    @Modifying
+    @Query("UPDATE Notes n SET n.numberOrder = n.numberOrder + 1 WHERE " +
+            "n.numberOrder >= :newOrder AND " +
+            "n.numberOrder < :oldOrder AND " +
+            "n.user.id = :userId")
+    void updateOrderIncrement(Long newOrder, Long oldOrder, Long userId);
 }

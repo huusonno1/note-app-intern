@@ -241,6 +241,24 @@ public class NoteController {
                 .build());
     }
 
+    @PutMapping("/{noteId}/order")
+    public ResponseEntity<ResponseObject> changeOrderNotes(
+            @PathVariable Long noteId,
+            @RequestParam Long newOrder
+    ) throws Exception {
+
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        noteService.updateNoteOrder( noteId, newOrder, loggedInUser.getId());
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .data(null)
+                .message("Order updated successfully")
+                .build());
+    }
+
+//    Change Note Order
     @PutMapping("/{noteId}/unpin")
     public ResponseEntity<ResponseObject> unpinNotes(
             @PathVariable Long noteId
@@ -256,8 +274,6 @@ public class NoteController {
                 .message("Update node successfully.")
                 .build());
     }
-
-//    Change Note Order
 
 //  DELETE
     @DeleteMapping("/{noteId}")

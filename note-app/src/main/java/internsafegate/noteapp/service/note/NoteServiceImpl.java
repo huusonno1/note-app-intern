@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,11 @@ public class NoteServiceImpl implements NoteService{
                 .orElseThrow(() -> new DataNotFoundException("Admin not found"));
 
         Notes note = noteMapper.toEntity(noteDTO, users);
+
+        Long maxOrder = noteRepo.findMaxNumberOrder(noteDTO.getUserId());
+
+        // Đặt numberOrder cho ghi chú mới
+        note.setNumberOrder(maxOrder != null ? maxOrder + 1 : 1);
 
         Notes savedNote = noteRepo.save(note);
 
@@ -346,7 +352,28 @@ public class NoteServiceImpl implements NoteService{
                 .build();
     }
 
+    @Override
+    @Transactional
+    public NoteResponse updateNoteOrder(Long noteId, Long newOrder, Long userId) throws Exception {
+        Notes noteToUpdate = noteRepo.findById(noteId)
+                .orElseThrow(() -> new DataNotFoundException("Note not found"));
 
+        Long oldOrder = noteToUpdate.getNumberOrder();
 
+        if (newOrder.equals(oldOrder)) {
+
+            return null;
+        }
+
+        if (newOrder > oldOrder) {
+            noteRepo.updateOrderDecrement(oldOrder, newOrder, userId);
+        } else {
+            noteRepo.updateOrderIncrement(newOrder, oldOrder, userId);
+        }
+
+        noteToUpdate.setNumberOrder(newOrder);
+        noteRepo.save(noteToUpdate);
+        return null;
+    }
 
 }
