@@ -3,6 +3,7 @@ package internsafegate.noteapp.controller.search;
 import internsafegate.noteapp.dto.response.ResponseObject;
 import internsafegate.noteapp.dto.response.note.NoteListResponse;
 import internsafegate.noteapp.dto.response.user.UserListResponse;
+import internsafegate.noteapp.model.NoteStatus;
 import internsafegate.noteapp.model.Users;
 import internsafegate.noteapp.security.SecurityUtils;
 import internsafegate.noteapp.service.note.NoteService;
@@ -27,6 +28,8 @@ public class SearchController {
     @GetMapping("/notes")
     public ResponseEntity<ResponseObject> searchNotes(
             @RequestParam(defaultValue = "", required = false) String keyword,
+            @RequestParam(defaultValue = "", required = false) String statusNote,
+            @RequestParam(required = false) Long tagId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit
     ) throws Exception {
@@ -35,7 +38,17 @@ public class SearchController {
 
         Users loggedInUser = securityUtils.getLoggedInUser();
 
-        NoteListResponse noteListResponse = noteService.searchNotes(loggedInUser.getId(), keyword, pageRequest);
+        NoteStatus noteStatus = null;
+        if(statusNote != null  && !statusNote.isEmpty()){
+            try {
+                noteStatus = NoteStatus.valueOf(statusNote.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                noteStatus = null;
+            }
+        }
+
+        NoteListResponse noteListResponse = noteService
+                .searchNotes(loggedInUser.getId(), keyword, noteStatus, tagId, pageRequest);
 
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.FOUND)

@@ -35,7 +35,7 @@ public class TagServiceImpl implements TagService{
         Optional<Tags> existingTag = tagRepo.findByName(tagDTO.getNameTag());
 
         Tags tag;
-        if (existingTag != null) {
+        if (existingTag.isPresent()) {
             tag = existingTag.get();
         } else {
             tag = new Tags();

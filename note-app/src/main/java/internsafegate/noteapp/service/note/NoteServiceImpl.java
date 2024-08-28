@@ -205,8 +205,14 @@ public class NoteServiceImpl implements NoteService{
     }
 
     @Override
-    public NoteListResponse searchNotes(Long userId, String keyword, Pageable pageable) throws Exception {
-        Page<Notes> notesPage = noteRepo.searchNotes(userId, keyword, pageable);
+    public NoteListResponse searchNotes(
+            Long userId,
+            String keyword,
+            NoteStatus noteStatus,
+            Long tagId,
+            Pageable pageable
+    ) throws Exception {
+        Page<Notes> notesPage = noteRepo.searchNotes(userId, keyword, noteStatus, tagId, pageable);
 
         if (notesPage == null) {
             throw new DataNotFoundException("Failed to fetch notes: notesPage is null");
