@@ -29,6 +29,7 @@ public class SearchController {
     public ResponseEntity<ResponseObject> searchNotes(
             @RequestParam(defaultValue = "", required = false) String keyword,
             @RequestParam(defaultValue = "", required = false) String statusNote,
+            @RequestParam(required = false) Boolean statusPin,
             @RequestParam(required = false) Long tagId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit
@@ -48,7 +49,7 @@ public class SearchController {
         }
 
         NoteListResponse noteListResponse = noteService
-                .searchNotes(loggedInUser.getId(), keyword, noteStatus, tagId, pageRequest);
+                .searchNotes(loggedInUser.getId(), keyword, noteStatus, statusPin, tagId, pageRequest);
 
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.FOUND)

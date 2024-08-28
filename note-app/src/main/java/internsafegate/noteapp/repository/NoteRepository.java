@@ -20,11 +20,13 @@ public interface NoteRepository extends JpaRepository<Notes, Long> {
     @Query("SELECT n FROM Notes n JOIN n.tags t WHERE n.user.id = :userId " +
             "AND (:keyword IS NULL OR :keyword = '' OR n.title LIKE %:keyword% )" +
             "AND (:noteStatus IS NULL OR n.statusNotes = :noteStatus) " +
+            "AND (:statusPin IS NULL OR n.isPinned = :statusPin) " +
             "AND (:tagId IS NULL OR t.id = :tagId)" +
             "ORDER BY n.createdAt DESC ")
     Page<Notes> searchNotes(Long userId,
                             @Param("keyword") String keyword,
                             NoteStatus noteStatus,
+                            Boolean statusPin,
                             Long tagId,
                             Pageable pageable);
     @Query("SELECT n FROM Notes n WHERE n.user.id = :userId AND (:statuses IS NULL OR n.statusNotes IN :statuses) ORDER BY n.isPinned DESC, n.numberOrder ASC ")

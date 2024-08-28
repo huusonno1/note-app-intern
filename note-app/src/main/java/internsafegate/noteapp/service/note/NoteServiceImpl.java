@@ -222,10 +222,11 @@ public class NoteServiceImpl implements NoteService{
             Long userId,
             String keyword,
             NoteStatus noteStatus,
+            Boolean statusPin,
             Long tagId,
             Pageable pageable
     ) throws Exception {
-        Page<Notes> notesPage = noteRepo.searchNotes(userId, keyword, noteStatus, tagId, pageable);
+        Page<Notes> notesPage = noteRepo.searchNotes(userId, keyword, noteStatus, statusPin, tagId, pageable);
 
         if (notesPage == null) {
             throw new DataNotFoundException("Failed to fetch notes: notesPage is null");
