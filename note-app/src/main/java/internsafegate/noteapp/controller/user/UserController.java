@@ -4,6 +4,7 @@ import internsafegate.noteapp.dto.request.user.UserDTO;
 import internsafegate.noteapp.dto.response.ResponseObject;
 import internsafegate.noteapp.dto.response.user.UserResponse;
 import internsafegate.noteapp.model.Users;
+import internsafegate.noteapp.security.SecurityUtils;
 import internsafegate.noteapp.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,12 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("${api.prefix}/user")
 public class UserController {
     private final UserService userService;
+    private final SecurityUtils securityUtils;
 
-    @GetMapping("/{id}")
+    @GetMapping("")
     public ResponseEntity<ResponseObject> getUserProfile(
-            @PathVariable Long id
     ) throws Exception {
-        UserResponse userProfile = userService.getUserProfile(id);
+        Users loggedInUser= securityUtils.getLoggedInUser();
+        UserResponse userProfile = userService.getUserProfile(loggedInUser.getId());
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.OK)
                 .data(userProfile)
@@ -28,22 +30,22 @@ public class UserController {
                 .build());
     }
 
-    @GetMapping("")
 
-    @PutMapping("/{userId}")
+
+    @PutMapping("")
     public ResponseEntity<ResponseObject> updateUserProfile(
-            @PathVariable Long userId,
             @RequestBody UserDTO userDTO,
             @RequestHeader("Authorization") String authorizationHeader
     ) throws Exception {
         String extractedToken = authorizationHeader.substring(7);
         Users user = userService.getUserDetailsFromToken(extractedToken);
+        Users loggedInUser= securityUtils.getLoggedInUser();
 
-        if (user.getId() != userId) {
+        if (user.getId() != loggedInUser.getId()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        UserResponse userProfile = userService.updateUserProfile(userId, userDTO);
+        UserResponse userProfile = userService.updateUserProfile(loggedInUser.getId(), userDTO);
 
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.OK)
