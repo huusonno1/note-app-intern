@@ -22,9 +22,9 @@ public class AuthResponse {
     @JsonProperty("tokenType")
     private String tokenType;
 
-    @JsonProperty("username")
-    private String username;
-
-    @JsonProperty("id")
-    private Long id;
+//    @JsonProperty("username")
+//    private String username;
+//
+//    @JsonProperty("id")
+//    private Long id;
 }
