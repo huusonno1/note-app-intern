@@ -181,7 +181,9 @@ public class NoteController {
 //    Filter Notes by Status
     @GetMapping("/status")
     public ResponseEntity<ResponseObject> getListNotesByStatus(
+            @RequestParam(defaultValue = "", required = false) String keyword,
             @RequestParam List<String> status,
+            @RequestParam(required = false) Long tagId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit
     ) throws Exception {
@@ -195,7 +197,8 @@ public class NoteController {
                 .map(NoteStatus::valueOf)  // Chuyển chuỗi thành giá trị `NoteStatus`
                 .collect(Collectors.toList());
 
-        NoteListResponse noteListResponse = noteService.getListNotesByStatus(loggedInUser.getId(), noteStatuses, pageRequest);
+        NoteListResponse noteListResponse = noteService
+                .getListNotesByStatus(loggedInUser.getId(), keyword, noteStatuses, tagId, pageRequest);
 
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.FOUND)

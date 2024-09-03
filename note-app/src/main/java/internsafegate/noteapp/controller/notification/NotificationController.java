@@ -1,10 +1,13 @@
 package internsafegate.noteapp.controller.notification;
 
 
+import internsafegate.noteapp.dto.request.notification.NotificationDTO;
 import internsafegate.noteapp.dto.response.ResponseObject;
 import internsafegate.noteapp.dto.response.notification.ListNotificationResponse;
 import internsafegate.noteapp.model.Users;
 import internsafegate.noteapp.security.SecurityUtils;
+import internsafegate.noteapp.service.fcm.FCMService;
+import internsafegate.noteapp.service.fcm.FCMServiceImpl;
 import internsafegate.noteapp.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class NotificationController {
     private final SecurityUtils securityUtils;
     private final NotificationService notificationService;
+    private final FCMService fcmService;
 
     @PostMapping("/{notificationId}/read")
     public ResponseEntity<ResponseObject> markRead(
@@ -49,6 +53,20 @@ public class NotificationController {
                 .status(HttpStatus.OK)
                 .data(notifications)
                 .message("Notification marked as read")
+                .build());
+    }
+
+    @PostMapping("")
+    public ResponseEntity<ResponseObject> sendNotification(
+            @RequestBody NotificationDTO dto
+    ) throws Exception {
+
+        fcmService.sendNotification(dto.getToken(), dto.getTitle(), dto.getBody());
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .data(null)
+                .message("done push")
                 .build());
     }
 }

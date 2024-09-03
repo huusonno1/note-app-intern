@@ -28,7 +28,7 @@ public interface NoteService {
 
     NoteListResponse searchNotes(Long userId, String keyword, NoteStatus noteStatus, Boolean statusPin, Long tagId, Pageable pageable) throws Exception;
 
-    NoteListResponse getListNotesByStatus(Long userId, List<NoteStatus> status, Pageable pageable) throws Exception;
+    NoteListResponse getListNotesByStatus(Long userId, String keyword, List<NoteStatus> status, Long tagId, Pageable pageable) throws Exception;
 
     NoteListResponse getListNotesByStatusPin(Long userId, Boolean statusPin, Pageable pageable) throws Exception;
 

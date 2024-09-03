@@ -3,6 +3,7 @@ package internsafegate.noteapp.config;
 import internsafegate.noteapp.security.JwtAuthenticationFilter;
 import internsafegate.noteapp.security.JwtService;
 import internsafegate.noteapp.service.auth.CustomOAuth2UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -59,7 +60,12 @@ public class SecurityConfig {
                 .logout(logout ->
                         logout.logoutUrl("/api/note-app/v1/auth/logout")
                                 .addLogoutHandler(logoutHandler)
-                                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+                                .logoutSuccessHandler((request, response, authentication) -> {
+                                    SecurityContextHolder.clearContext();
+                                    response.setStatus(HttpServletResponse.SC_OK);
+                                    response.setContentType("application/json");
+                                    response.getWriter().write("{\"message\": \"Logout thành công\"}");
+                                })
                 )
         ;
         return http.build();

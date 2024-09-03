@@ -261,11 +261,11 @@ public class NoteServiceImpl implements NoteService{
     }
 
     @Override
-    public NoteListResponse getListNotesByStatus(Long userId, List<NoteStatus> statuses, Pageable pageable) throws Exception {
+    public NoteListResponse getListNotesByStatus(Long userId, String keyword, List<NoteStatus> statuses, Long tagId, Pageable pageable) throws Exception {
 //        List<NoteStatus> statuses = new ArrayList<>();
 //        statuses.add(NoteStatus.ARCHIVED);
 //        statuses.add(NoteStatus.COMPLETED);
-        Page<Notes> notesPage = noteRepo.getAllNotesByStatus(userId, statuses, pageable);
+        Page<Notes> notesPage = noteRepo.getAllNotesByStatus(userId, keyword, statuses, tagId, pageable);
 
         if (notesPage == null) {
             throw new DataNotFoundException("Failed to fetch notes: notesPage is null");

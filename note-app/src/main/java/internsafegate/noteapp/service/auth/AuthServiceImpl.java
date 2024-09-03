@@ -62,9 +62,9 @@ public class AuthServiceImpl implements AuthService{
                 .accessToken(jwtToken)
                 .tokenType("BEARER")
                 .refreshToken(refreshToken)
+                .username(savedUser.getUsername())
+                .id(savedUser.getId())
                 .build();
-//                        .username(savedUser.getUsername())
-//                .id(savedUser.getId())
     }
 
     @Override
@@ -106,6 +106,8 @@ public class AuthServiceImpl implements AuthService{
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .tokenType("BEARER")
+                .username(userDetail.getUsername())
+                .id(userDetail.getId())
                 .build();
 //        .username(userDetail.getUsername())
 //        .id(userDetail.getId())
@@ -144,8 +146,8 @@ public class AuthServiceImpl implements AuthService{
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .tokenType("BEARER")
-//                .username(user.getUsername())
-//                .id(user.getId())
+                .username(user.getUsername())
+                .id(user.getId())
                 .build();
     }
 
