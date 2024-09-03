@@ -138,7 +138,7 @@ public class ShareNoteServiceImpl implements ShareNoteService{
                 .notificationType(NotificationType.SHARED)
                 .build();
 
-//        notificationRepo.save(notification);
+        notificationRepo.save(notification);
 //        sendPushNotification(receiver.getDeviceToken(), "New Note Shared", notification.getMessage());
     }
 
