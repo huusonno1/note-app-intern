@@ -74,8 +74,8 @@ public class TagServiceImpl implements TagService{
     public TagResponse createTag(TagDTO tagDTO, Long userId) throws Exception {
         Users users = userRepo.findById(userId)
                 .orElseThrow(() -> new DataNotFoundException("User not found for id: " + userId));
-        Optional<Tags> tags = tagRepo.findByName(tagDTO.getNameTag());
-        if (tags.isPresent()){
+        Tags tags = tagRepo.findByNameAndUserId(tagDTO.getNameTag(), userId);
+        if (tags != null){
             throw new DataNotFoundException("Tag is exist for name tag: " + tagDTO.getNameTag());
         }
 

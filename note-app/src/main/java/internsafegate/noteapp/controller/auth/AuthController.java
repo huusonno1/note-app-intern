@@ -9,10 +9,7 @@ import internsafegate.noteapp.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,6 +48,19 @@ public class AuthController {
                 .build());
     }
 
+    @GetMapping("/confirm-account")
+    public ResponseEntity<ResponseObject> confirmUserAccount(
+            @RequestParam("token")String confirmationToken
+    ) throws Exception {
+
+        String message = authService.confirmEmail(confirmationToken);
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.CREATED)
+                .data(null)
+                .message(message)
+                .build());
+    }
     @PostMapping("login")
     public ResponseEntity<ResponseObject> login(
             @RequestBody LoginDTO loginDTO

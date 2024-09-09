@@ -40,6 +40,9 @@ public class Users extends BaseEntity implements UserDetails {
     @Column(name = "is_active")
     private boolean active;
 
+    @Column(name = "is_enabled")
+    private boolean isEnabled;
+
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
 

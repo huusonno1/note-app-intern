@@ -10,4 +10,6 @@ public interface AuthService {
     AuthResponse login(LoginDTO loginDTO) throws Exception;
 
     AuthResponse authenticateGoogleUser(String googleToken) throws Exception;
+
+    String confirmEmail(String confirmationToken) throws Exception;
 }
