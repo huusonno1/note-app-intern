@@ -3,7 +3,6 @@ package internsafegate.noteapp.config;
 import internsafegate.noteapp.security.JwtAuthenticationFilter;
 import internsafegate.noteapp.security.JwtService;
 import internsafegate.noteapp.service.auth.CustomOAuth2SuccessHandler;
-import internsafegate.noteapp.service.auth.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,8 +33,6 @@ public class SecurityConfig {
     private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
 
     private final LogoutHandler logoutHandler;
-
-    private final JwtService jwtService;
 
 
     @Value("${api.prefix}")
