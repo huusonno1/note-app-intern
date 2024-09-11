@@ -11,8 +11,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class LoginDTO {
-    @JsonProperty("username")
-    private String username = "";
+    @JsonProperty("email")
+    private String email = "";
 
     @JsonProperty("password")
     @NotBlank(message = "Password cannot be black")

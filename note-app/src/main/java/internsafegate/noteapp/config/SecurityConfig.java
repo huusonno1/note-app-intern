@@ -2,6 +2,7 @@ package internsafegate.noteapp.config;
 
 import internsafegate.noteapp.security.JwtAuthenticationFilter;
 import internsafegate.noteapp.security.JwtService;
+import internsafegate.noteapp.service.auth.CustomOAuth2SuccessHandler;
 import internsafegate.noteapp.service.auth.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -31,7 +31,7 @@ public class SecurityConfig {
 
     private final AuthenticationProvider authenticationProvider;
 
-    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
 
     private final LogoutHandler logoutHandler;
 
@@ -54,6 +54,9 @@ public class SecurityConfig {
                                 .anyRequest()
                                 .authenticated()
                 )
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(customOAuth2SuccessHandler)
+                )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
@@ -70,4 +73,6 @@ public class SecurityConfig {
         ;
         return http.build();
     }
+
+
 }

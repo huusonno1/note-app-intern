@@ -1,5 +1,6 @@
 package internsafegate.noteapp.security;
 
+import internsafegate.noteapp.model.Users;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -27,6 +28,10 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
+    public String extractEmail(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("email", String.class);
+    }
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
@@ -34,20 +39,24 @@ public class JwtService {
 
     public String generateToken(UserDetails userDetails) {
 
-        return generateToken(new HashMap<>(), userDetails);
+        HashMap<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("email", ((Users) userDetails).getEmail()); // Assuming Users implements UserDetails
+        return generateToken(extraClaims, userDetails);
     }
 
     public String generateToken(
-            Map<String, Object> extraClaims,
+            HashMap<String, Object> extraClaims,
             UserDetails userDetails
     ) {
-        return buildToken(new HashMap<>(), userDetails, jwtExpiration);
+        return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
     public String generateRefreshToken(
             UserDetails userDetails
     ) {
-        return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+        HashMap<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("email", ((Users) userDetails).getEmail());
+        return buildToken(extraClaims, userDetails, refreshExpiration);
     }
 
     private String buildToken(
@@ -67,7 +76,8 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        final String email = extractEmail(token);
+        return (email.equals(((Users) userDetails).getEmail())) && !isTokenExpired(token);
     }
 
     public boolean isTokenExpired(String token) {

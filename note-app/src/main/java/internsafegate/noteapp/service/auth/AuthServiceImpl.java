@@ -104,8 +104,8 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public AuthResponse login(LoginDTO loginDTO) throws Exception {
         Optional<Users> optionalUser = Optional.empty();
-        if(loginDTO.getUsername() != null) {
-            optionalUser = userRepo.findByUsername(loginDTO.getUsername());
+        if(loginDTO.getEmail() != null) {
+            optionalUser = userRepo.findByEmail(loginDTO.getEmail());
         }
 
         if(optionalUser.isEmpty()){
@@ -124,7 +124,7 @@ public class AuthServiceImpl implements AuthService{
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(
-                        loginDTO.getUsername(),
+                        loginDTO.getEmail(),
                         loginDTO.getPassword(),
                         userDetail.getAuthorities());
 

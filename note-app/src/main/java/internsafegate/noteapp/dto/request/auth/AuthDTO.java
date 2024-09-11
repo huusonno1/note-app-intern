@@ -20,9 +20,6 @@ public class AuthDTO {
     @NotBlank(message = "Password cannot be black")
     private String password = "";
 
-    @JsonProperty("retype_password")
-    private String retypePassword = "";
-
     @JsonProperty("email")
     private String email = "";
 

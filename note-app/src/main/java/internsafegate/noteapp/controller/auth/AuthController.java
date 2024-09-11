@@ -23,21 +23,14 @@ public class AuthController {
     ) throws Exception {
         // check cac json co dung trg du lieu khong
 
-        if(authDTO.getUsername() == null || authDTO.getUsername().trim().isBlank()) {
+        if(authDTO.getEmail() == null || authDTO.getEmail().trim().isBlank()) {
             return ResponseEntity.badRequest().body(ResponseObject.builder()
                     .status(HttpStatus.BAD_REQUEST)
                     .data(null)
-                    .message("username is required")
+                    .message("email is required")
                     .build());
         }
 
-        if(!authDTO.getPassword().equals(authDTO.getRetypePassword())) {
-            return ResponseEntity.badRequest().body(ResponseObject.builder()
-                    .status(HttpStatus.BAD_REQUEST)
-                    .data(null)
-                    .message("password is not match")
-                    .build());
-        }
 
         AuthResponse registerResponse = authService.register(authDTO);
 
@@ -66,11 +59,11 @@ public class AuthController {
             @RequestBody LoginDTO loginDTO
     ) throws Exception {
 
-        if(loginDTO.getUsername() == null || loginDTO.getUsername().trim().isBlank()) {
+        if(loginDTO.getEmail() == null || loginDTO.getEmail().trim().isBlank()) {
             return ResponseEntity.badRequest().body(ResponseObject.builder()
                     .status(HttpStatus.BAD_REQUEST)
                     .data(null)
-                    .message("username is required")
+                    .message("email is required")
                     .build());
         }
 
