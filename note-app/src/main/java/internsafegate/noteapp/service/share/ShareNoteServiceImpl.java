@@ -6,10 +6,8 @@ import internsafegate.noteapp.dto.response.share.ShareNoteResponse;
 import internsafegate.noteapp.exception.DataNotFoundException;
 import internsafegate.noteapp.mapper.ShareNoteMapper;
 import internsafegate.noteapp.model.*;
-import internsafegate.noteapp.repository.NoteRepository;
-import internsafegate.noteapp.repository.NotificationRepository;
-import internsafegate.noteapp.repository.ShareNoteRepository;
-import internsafegate.noteapp.repository.UserRepository;
+import internsafegate.noteapp.repository.*;
+import internsafegate.noteapp.service.fcm.FCMService;
 import internsafegate.noteapp.service.fcm.FCMServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,6 +26,8 @@ public class ShareNoteServiceImpl implements ShareNoteService{
     private final UserRepository userRepo;
     private final ShareNoteRepository shareNoteRepo;
     private final NotificationRepository notificationRepo;
+    private final DeviceTokenRepository deviceTokenRepository;
+    private final FCMService fcmService;
 
     @Override
     public ShareNoteResponse shareNote(ShareNoteDTO shareNoteDTO, Long senderId) throws Exception {
@@ -139,8 +139,9 @@ public class ShareNoteServiceImpl implements ShareNoteService{
                 .build();
 
         notificationRepo.save(notification);
+        DeviceTokens deviceToken = deviceTokenRepository.findByUserId(receiver.getId());
 
-//        sendPushNotification(receiver.getDeviceToken(), "New Note Shared", notification.getMessage());
+        sendPushNotification(deviceToken.getTokenOfDevice(), "New Note Shared", notification.getMessage());
     }
 
     private void sendPushNotification(String deviceToken, String title, String message) {
@@ -148,7 +149,6 @@ public class ShareNoteServiceImpl implements ShareNoteService{
             return;
         }
 
-        FCMServiceImpl fcmService = new FCMServiceImpl();
         fcmService.sendNotification(deviceToken, title, message);
     }
 }
