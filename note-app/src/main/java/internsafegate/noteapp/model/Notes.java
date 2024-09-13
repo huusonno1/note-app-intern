@@ -37,7 +37,7 @@ public class Notes extends BaseEntity {
     @OneToMany(mappedBy = "notes", cascade = CascadeType.ALL)
     private List<NoteContent> noteContents;
 
-    @ManyToMany
+    @ManyToMany()
     @JoinTable(
             name = "note_tags",
             joinColumns = @JoinColumn(name = "note_id"),

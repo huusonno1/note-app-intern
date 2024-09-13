@@ -2,6 +2,7 @@ package internsafegate.noteapp.repository;
 
 import internsafegate.noteapp.model.Tags;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -16,4 +17,8 @@ public interface TagRepository extends JpaRepository<Tags, Long> {
 
     @Query("SELECT t FROM Tags t WHERE t.users.id = ?1")
     List<Tags> findListTagByUserId(Long userId);
+
+    @Query("DELETE FROM Tags t WHERE t.id = ?1 ")
+    void deleteTagByIdOfUser(Long tagId);
+
 }

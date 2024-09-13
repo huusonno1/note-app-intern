@@ -27,7 +27,7 @@ public class Tags extends BaseEntity{
     @JoinColumn(name = "user_id")
     private Users users;
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags", cascade = CascadeType.ALL)
     private List<Notes> notes;
 
 }
