@@ -42,17 +42,20 @@ public class AuthController {
     }
 
     @GetMapping("confirm-account")
-    public ResponseEntity<ResponseObject> confirmUserAccount(
+    public ResponseEntity<String> confirmUserAccount(
             @RequestParam("token")String confirmationToken
     ) throws Exception {
 
-        String message = authService.confirmEmail(confirmationToken);
+        boolean isTokenValid = authService.confirmEmail(confirmationToken);
 
-        return ResponseEntity.ok(ResponseObject.builder()
-                .status(HttpStatus.CREATED)
-                .data(null)
-                .message(message)
-                .build());
+        if (isTokenValid) {
+            // Trả về giao diện thành công
+            return ResponseEntity.ok(getSuccessPage());
+        } else {
+            // Trả về giao diện thất bại
+            return ResponseEntity.ok(getFailurePage());
+        }
+
     }
     @PostMapping("login")
     public ResponseEntity<ResponseObject> login(
@@ -96,6 +99,28 @@ public class AuthController {
                 .data(loginResponse)
                 .message("Login successfully")
                 .build());
+    }
+
+    private String getSuccessPage() {
+        return "<html>" +
+                "<body>" +
+                "<div style='text-align: center; padding: 50px;'>" +
+                "<h2>Account Confirmed!</h2>" +
+                "<p>Your account has been successfully confirmed. Thank you for registering with us!</p>" +
+                "</div>" +
+                "</body>" +
+                "</html>";
+    }
+
+    private String getFailurePage() {
+        return "<html>" +
+                "<body>" +
+                "<div style='text-align: center; padding: 50px;'>" +
+                "<h2>Confirmation Failed</h2>" +
+                "<p>There was a problem confirming your account. Please try again later or contact support.</p>" +
+                "</div>" +
+                "</body>" +
+                "</html>";
     }
 
 }

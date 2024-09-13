@@ -38,6 +38,9 @@ public class SecurityConfig {
     @Value("${api.prefix}")
     private String apiPrefix;
 
+    private String baseUrl;
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -45,14 +48,12 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(
-                                        String.format("%s/auth/**", apiPrefix)
+                                        String.format("%s/auth/**", apiPrefix),
+                                        String.format("%s/oauth2/**", apiPrefix)
                                 )
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()
-                )
-                .oauth2Login(oauth2 -> oauth2
-                        .successHandler(customOAuth2SuccessHandler)
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)

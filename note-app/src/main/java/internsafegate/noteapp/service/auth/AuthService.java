@@ -11,5 +11,5 @@ public interface AuthService {
 
     AuthResponse authenticateGoogleUser(String googleToken) throws Exception;
 
-    String confirmEmail(String confirmationToken) throws Exception;
+    Boolean confirmEmail(String confirmationToken) throws Exception;
 }

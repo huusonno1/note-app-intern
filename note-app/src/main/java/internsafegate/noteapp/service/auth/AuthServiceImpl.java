@@ -18,6 +18,7 @@ import internsafegate.noteapp.security.JwtService;
 import internsafegate.noteapp.service.email.EmailService;
 import internsafegate.noteapp.service.role.RoleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,6 +41,10 @@ public class AuthServiceImpl implements AuthService{
     private final RoleService roleService;
     private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
+
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
+    private String clientId;
+
 
 
 // ần xác thuc email
@@ -152,6 +157,10 @@ public class AuthServiceImpl implements AuthService{
         // Xác thực Access Token với Google
         GoogleUser googleUser = verifyAccessTokenWithGoogle(googleToken);
 
+        if(!clientId.equals(googleUser.getClientId())){
+            throw new DataNotFoundException("Account google not login in note-app");
+        }
+
         // Kiểm tra hoặc lưu người dùng trong DB
 
         Optional<Users> userOptional = userRepo.findByEmail(googleUser.getEmail());
@@ -186,7 +195,7 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public String confirmEmail(String confirmationToken) throws Exception{
+    public Boolean confirmEmail(String confirmationToken) throws Exception{
         ConfirmationToken token = confirmationTokenRepo.findByConfirmationToken(confirmationToken);
 
         if(token != null)
@@ -198,9 +207,9 @@ public class AuthServiceImpl implements AuthService{
             Users users = user.get();
             users.setEnabled(true);
             userRepo.save(users);
-            return "Email verified successfully!";
+            return true;
         }
-        throw new Exception("Error: Couldn't verify email");
+        return false;
     }
 
     // check token cua app

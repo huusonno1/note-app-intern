@@ -10,6 +10,10 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class GoogleUser {
+
+    @JsonProperty("aud")
+    private String clientId;
+
     @JsonProperty("sub")
     private String id;
 

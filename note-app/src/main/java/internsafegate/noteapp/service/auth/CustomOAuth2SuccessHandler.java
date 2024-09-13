@@ -75,6 +75,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                 .status(HttpStatus.OK)
                 .data(authResponse)
                 .build();
+        System.out.println("login by google success");
 
         // Thiết lập phản hồi là JSON
         response.setContentType("application/json");
