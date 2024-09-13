@@ -374,6 +374,7 @@ public class NoteServiceImpl implements NoteService{
 
         noteToUpdate.setNumberOrder(newOrder);
         noteRepo.save(noteToUpdate);
+        System.out.println("number note change success");
         return null;
     }
 

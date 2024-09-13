@@ -41,7 +41,7 @@ public class AuthController {
                 .build());
     }
 
-    @GetMapping("/confirm-account")
+    @GetMapping("confirm-account")
     public ResponseEntity<ResponseObject> confirmUserAccount(
             @RequestParam("token")String confirmationToken
     ) throws Exception {

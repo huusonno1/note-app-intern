@@ -12,4 +12,7 @@ import lombok.*;
 public class DeviceTokenDTO {
     @JsonProperty("registration_token")
     private String registrationToken = "";
+
+    @JsonProperty("platform")
+    private String platform = "";
 }

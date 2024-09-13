@@ -56,17 +56,4 @@ public class NotificationController {
                 .build());
     }
 
-    @PostMapping("")
-    public ResponseEntity<ResponseObject> sendNotification(
-            @RequestBody NotificationDTO dto
-    ) throws Exception {
-
-        fcmService.sendNotification(dto.getToken(), dto.getTitle(), dto.getBody());
-
-        return ResponseEntity.ok(ResponseObject.builder()
-                .status(HttpStatus.OK)
-                .data(null)
-                .message("done push")
-                .build());
-    }
 }

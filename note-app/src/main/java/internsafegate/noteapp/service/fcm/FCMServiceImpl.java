@@ -1,8 +1,6 @@
 package internsafegate.noteapp.service.fcm;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.*;
 import internsafegate.noteapp.dto.request.device_tokens.DeviceTokenDTO;
 import internsafegate.noteapp.exception.DataNotFoundException;
 import internsafegate.noteapp.model.DeviceTokens;
@@ -12,59 +10,56 @@ import internsafegate.noteapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class FCMServiceImpl implements FCMService{
 
-    private final DeviceTokenRepository deviceTokenRepo;
-    private final UserRepository userRepo;
 
-
-    public void sendNotification(String token, String title, String body) {
+    public void sendNotification(
+            List<String> token,
+            String title,
+            internsafegate.noteapp.model.Notification dataNoti
+    ) throws FirebaseMessagingException {
         Notification notification = Notification.builder()
                 .setTitle(title)
-                .setBody(body)
+                .setBody(dataNoti.getMessage())
                 .build();
 
+        Boolean isRead = dataNoti.isRead();
         Map<String, String> data = new HashMap<>();
-        data.put("id", "39");
-        data.put("notification_type", "SHARED");
-        data.put("is_read", "false");
-        data.put("message", "Share Note By A");
-        data.put("owned_id", "1");
-        data.put("sender", "username");
+        data.put("id", dataNoti.getId().toString());
+        data.put("notification_type", dataNoti.getNotificationType().name());
+        data.put("is_read", isRead.toString());
+        data.put("message", dataNoti.getMessage());
+        data.put("owned_id", dataNoti.getOwner().getId().toString());
+        data.put("sender", dataNoti.getShareNote().getSender().getUsername());
 
-        Message message = Message.builder()
-                .setToken(token)
+
+        MulticastMessage message = MulticastMessage.builder()
                 .setNotification(notification)
                 .putAllData(data)
+                .addAllTokens(token)
                 .build();
+        BatchResponse response = FirebaseMessaging.getInstance().sendEachForMulticast(message);
+        if (response.getFailureCount() > 0) {
+            List<SendResponse> responses = response.getResponses();
+            List<String> failedTokens = new ArrayList<>();
+            for (int i = 0; i < responses.size(); i++) {
+                if (!responses.get(i).isSuccessful()) {
+                    // The order of responses corresponds to the order of the registration tokens.
+                    failedTokens.add(token.get(i));
+                }
+            }
 
-        try {
-            String response = FirebaseMessaging.getInstance().send(message);
-            System.out.println("Successfully sent message: " + response);
-        } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("List of tokens that caused failures: " + failedTokens);
         }
+
     }
 
-    @Override
-    public void saveDeviceToken(DeviceTokenDTO deviceTokenDTO, Long userId) throws Exception {
-        Users users = userRepo.findById(userId)
-                .orElseThrow(()-> new DataNotFoundException("not found User by id"));
 
-        // check id token fcm ??
-
-        // build device token
-        DeviceTokens deviceTokens = DeviceTokens.builder()
-                .tokenOfDevice(deviceTokenDTO.getRegistrationToken())
-                .user(users)
-                .build();
-
-        // save token fcm
-        deviceTokenRepo.save(deviceTokens);
-    }
 }

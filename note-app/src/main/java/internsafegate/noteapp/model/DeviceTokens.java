@@ -18,6 +18,9 @@ public class DeviceTokens extends BaseEntity{
     @Column(name = "token_of_device")
     private String tokenOfDevice;
 
+    @Column(name = "platform")
+    private String platform;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Users user;

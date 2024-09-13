@@ -1,5 +1,6 @@
 package internsafegate.noteapp.service.share;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import internsafegate.noteapp.dto.request.share.ShareNoteDTO;
 import internsafegate.noteapp.dto.response.share.ListShareNoteResponse;
 import internsafegate.noteapp.dto.response.share.ShareNoteResponse;
@@ -129,7 +130,7 @@ public class ShareNoteServiceImpl implements ShareNoteService{
     }
 
 
-    private void createNotification(Users receiver, ShareNotes savedShareNote) {
+    private void createNotification(Users receiver, ShareNotes savedShareNote) throws FirebaseMessagingException {
         Notification notification = Notification.builder()
                 .owner(receiver)
                 .message("Note shared by" + receiver.getUsername())
@@ -139,16 +140,19 @@ public class ShareNoteServiceImpl implements ShareNoteService{
                 .build();
 
         notificationRepo.save(notification);
-        DeviceTokens deviceToken = deviceTokenRepository.findByUserId(receiver.getId());
+        List<DeviceTokens> deviceToken = deviceTokenRepository.findByUserId(receiver.getId());
+        List<String> listDeviceToken = deviceToken.stream()
+                .map(DeviceTokens::getTokenOfDevice)
+                .toList();
 
-        sendPushNotification(deviceToken.getTokenOfDevice(), "New Note Shared", notification.getMessage());
+        sendPushNotification(listDeviceToken, "New Note Shared", notification );
     }
 
-    private void sendPushNotification(String deviceToken, String title, String message) {
+    private void sendPushNotification(List<String> deviceToken, String title, Notification data) throws FirebaseMessagingException {
         if (deviceToken == null || deviceToken.isEmpty()) {
             return;
         }
 
-        fcmService.sendNotification(deviceToken, title, message);
+        fcmService.sendNotification(deviceToken, title, data);
     }
 }

@@ -6,6 +6,7 @@ import internsafegate.noteapp.dto.response.ResponseObject;
 import internsafegate.noteapp.dto.response.auth.AuthResponse;
 import internsafegate.noteapp.model.Users;
 import internsafegate.noteapp.security.SecurityUtils;
+import internsafegate.noteapp.service.device_tokens.DeviceTokenService;
 import internsafegate.noteapp.service.fcm.FCMService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/fcm")
 public class DeviceTokenController {
-    private final FCMService fcmService;
+    private final DeviceTokenService deviceTokenService;
 
     private final SecurityUtils securityUtils;
 
@@ -31,7 +32,7 @@ public class DeviceTokenController {
 
         Users loggedInUser= securityUtils.getLoggedInUser();
 
-        fcmService.saveDeviceToken(deviceTokenDTO, loggedInUser.getId());
+        deviceTokenService.saveDeviceToken(deviceTokenDTO, loggedInUser.getId());
 
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.CREATED)
