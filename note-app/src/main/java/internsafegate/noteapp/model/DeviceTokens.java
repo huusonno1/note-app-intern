@@ -3,6 +3,8 @@ package internsafegate.noteapp.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "device_tokens")
 @Getter
@@ -21,7 +23,19 @@ public class DeviceTokens extends BaseEntity{
     @Column(name = "platform")
     private String platform;
 
+    @Column(name = "device_id")
+    private String deviceId;
+
+    @Column(name = "status_token")
+    private Boolean statusToken;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Users user;
+
+    public String generateDeviceId() {
+        // Tạo UUID v4
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString();
+    }
 }

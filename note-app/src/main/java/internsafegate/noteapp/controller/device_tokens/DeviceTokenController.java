@@ -1,9 +1,11 @@
 package internsafegate.noteapp.controller.device_tokens;
 
 import internsafegate.noteapp.dto.request.auth.AuthDTO;
+import internsafegate.noteapp.dto.request.device_tokens.CheckDeviceDTO;
 import internsafegate.noteapp.dto.request.device_tokens.DeviceTokenDTO;
 import internsafegate.noteapp.dto.response.ResponseObject;
 import internsafegate.noteapp.dto.response.auth.AuthResponse;
+import internsafegate.noteapp.dto.response.device_tokens.CheckDeviceResponse;
 import internsafegate.noteapp.model.Users;
 import internsafegate.noteapp.security.SecurityUtils;
 import internsafegate.noteapp.service.device_tokens.DeviceTokenService;
@@ -38,6 +40,23 @@ public class DeviceTokenController {
                 .status(HttpStatus.CREATED)
                 .data(null)
                 .message("save device token fcm successfully")
+                .build());
+    }
+
+    @PostMapping("/check-device-id")
+    public ResponseEntity<ResponseObject> checkDeviceId(
+            @RequestBody CheckDeviceDTO checkDeviceDTO
+    ) throws Exception {
+
+        Users loggedInUser= securityUtils.getLoggedInUser();
+
+        CheckDeviceResponse checkDeviceResponse = deviceTokenService
+                .checkDeviceId(checkDeviceDTO.getDeviceId(), loggedInUser.getId());
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .data(checkDeviceResponse)
+                .message("check device id is success")
                 .build());
     }
 }

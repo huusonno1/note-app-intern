@@ -36,7 +36,7 @@ public class FCMServiceImpl implements FCMService{
         data.put("notification_type", dataNoti.getNotificationType().name());
         data.put("is_read", isRead.toString());
         data.put("message", dataNoti.getMessage());
-        data.put("owned_id", dataNoti.getOwner().getId().toString());
+        data.put("owned_id", dataNoti.getOwner().getId().toString() + "moi");
         data.put("sender", dataNoti.getShareNote().getSender().getUsername());
 
 

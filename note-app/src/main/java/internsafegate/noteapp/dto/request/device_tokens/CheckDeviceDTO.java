@@ -9,13 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DeviceTokenDTO {
-    @JsonProperty("registration_token")
-    private String registrationToken = "";
-
-    @JsonProperty("platform")
-    private String platform = "";
-
+public class CheckDeviceDTO {
     @JsonProperty("device_id")
     private String deviceId = "";
 }
