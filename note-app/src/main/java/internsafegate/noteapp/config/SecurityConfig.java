@@ -58,16 +58,16 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout(logout ->
-                        logout.logoutUrl("/api/note-app/v1/auth/logout")
-                                .addLogoutHandler(logoutHandler)
-                                .logoutSuccessHandler((request, response, authentication) -> {
-                                    SecurityContextHolder.clearContext();
-                                    response.setStatus(HttpServletResponse.SC_OK);
-                                    response.setContentType("application/json");
-                                    response.getWriter().write("{\"message\": \"Logout thành công\"}");
-                                })
-                )
+//                .logout(logout ->
+//                        logout.logoutUrl("/api/note-app/v1/auth/logout")
+//                                .addLogoutHandler(logoutHandler)
+//                                .logoutSuccessHandler((request, response, authentication) -> {
+//                                    SecurityContextHolder.clearContext();
+//                                    response.setStatus(HttpServletResponse.SC_OK);
+//                                    response.setContentType("application/json");
+//                                    response.getWriter().write("{\"message\": \"Logout thành công\"}");
+//                                })
+//                )
         ;
         return http.build();
     }

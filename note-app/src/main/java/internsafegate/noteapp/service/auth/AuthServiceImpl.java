@@ -2,26 +2,24 @@ package internsafegate.noteapp.service.auth;
 
 import internsafegate.noteapp.dto.request.auth.AuthDTO;
 import internsafegate.noteapp.dto.request.auth.LoginDTO;
+import internsafegate.noteapp.dto.request.auth.LogoutDTO;
 import internsafegate.noteapp.dto.response.auth.AuthResponse;
 import internsafegate.noteapp.dto.response.auth.GoogleUser;
 import internsafegate.noteapp.exception.DataNotFoundException;
 import internsafegate.noteapp.exception.UsernameAlreadyExistsException;
-import internsafegate.noteapp.model.ConfirmationToken;
-import internsafegate.noteapp.model.Role;
-import internsafegate.noteapp.model.Token;
-import internsafegate.noteapp.model.Users;
-import internsafegate.noteapp.repository.ConfirmationTokenRepository;
-import internsafegate.noteapp.repository.RoleRepository;
-import internsafegate.noteapp.repository.TokenRepository;
-import internsafegate.noteapp.repository.UserRepository;
+import internsafegate.noteapp.model.*;
+import internsafegate.noteapp.repository.*;
 import internsafegate.noteapp.security.JwtService;
 import internsafegate.noteapp.service.email.EmailService;
 import internsafegate.noteapp.service.role.RoleService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -35,6 +33,7 @@ import java.util.UUID;
 public class AuthServiceImpl implements AuthService{
     private final UserRepository userRepo;
     private final TokenRepository tokenRepo;
+    private final DeviceTokenRepository deviceTokenRepo;
     private final ConfirmationTokenRepository confirmationTokenRepo;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -210,6 +209,30 @@ public class AuthServiceImpl implements AuthService{
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void logoutCustom(HttpServletRequest request, HttpServletResponse response, LogoutDTO logoutDTO) throws Exception {
+        final String authHeader = request.getHeader("Authorization");
+        final String jwt;
+        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+            throw new Exception("Missing or invalid Authorization header");
+        }
+
+        jwt = authHeader.substring(7);
+        Token storedToken = tokenRepo.findByToken(jwt)
+                .orElse(null);
+        if (storedToken != null) {
+            storedToken.setExpired(true);
+            storedToken.setRevoked(true);
+            tokenRepo.save(storedToken);
+            SecurityContextHolder.clearContext();
+        }
+
+        DeviceTokens deviceTokens = deviceTokenRepo.findByUserIdAndDeviceId(storedToken.getUser().getId(), logoutDTO.getDeviceId())
+                .orElseThrow(()-> new DataNotFoundException("not found device Id and user id"));
+        deviceTokens.setStatusToken(false);
+        deviceTokenRepo.save(deviceTokens);
     }
 
     // check token cua app

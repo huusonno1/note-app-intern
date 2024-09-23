@@ -3,10 +3,15 @@ package internsafegate.noteapp.controller.auth;
 import internsafegate.noteapp.dto.request.auth.AuthDTO;
 import internsafegate.noteapp.dto.request.auth.GoogleDTO;
 import internsafegate.noteapp.dto.request.auth.LoginDTO;
+import internsafegate.noteapp.dto.request.auth.LogoutDTO;
 import internsafegate.noteapp.dto.response.ResponseObject;
 import internsafegate.noteapp.dto.response.auth.AuthResponse;
 import internsafegate.noteapp.service.auth.AuthService;
+import internsafegate.noteapp.service.auth.LogoutService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("${api.prefix}/auth")
 public class AuthController {
     private final AuthService authService;
-
+    private final LogoutService logoutService;
     @PostMapping("register")
     public ResponseEntity<ResponseObject> register(
             @RequestBody AuthDTO authDTO
@@ -98,6 +103,22 @@ public class AuthController {
                 .status(HttpStatus.OK)
                 .data(loginResponse)
                 .message("Login successfully")
+                .build());
+    }
+
+    @PostMapping("logout")
+    public ResponseEntity<ResponseObject> logoutCustom(
+            @RequestBody LogoutDTO logoutDTO,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws Exception {
+
+        authService.logoutCustom(request, response, logoutDTO);
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK)
+                .data(null)
+                .message("Logout successfully")
                 .build());
     }
 
