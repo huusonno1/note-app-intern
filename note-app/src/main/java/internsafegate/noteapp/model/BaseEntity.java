@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public class BaseEntity {
     // test update intelij
+    //  test conflict
+    //  test push new feature
     @Column(name = "created_at")
     //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     private LocalDateTime createdAt;
